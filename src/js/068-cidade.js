@@ -2,17 +2,17 @@
 const CITY={
   P:[{k:'cassino',ic:'🎰',nm:'Torneios',go:'#torneio',row:0},{k:'clube',ic:'♣️',nm:'Cash',go:'#jogar',row:0},{k:'escola',ic:'🎓',nm:'Escola',go:'#treino',row:0},
      {k:'tv',ic:'🎤',nm:'Mídia',tabs:['midia'],row:0},{k:'agencia',ic:'🤝',nm:'Marcas',tabs:['pat'],row:0},{k:'hall',ic:'🏆',nm:'Legado',tabs:['legado'],row:0},
-     {k:'casa',ic:'🏡',nm:'Sua casa',tabs:['casa'],row:1},{k:'pais',ic:'👨‍👩‍👧',nm:'Família',tabs:['fam'],row:1},{k:'cafe',ic:'💘',nm:'Encontros',tabs:['namoro'],row:1},
-     {k:'bar',ic:'🍻',nm:'Bar',tabs:['cel','hg'],row:1},{k:'shop',ic:'🛍️',nm:'Shopping',tabs:['loja'],row:1},{k:'conc',ic:'🚗',nm:'Carros',tabs:['garagem'],row:1}],
+     {k:'casa',ic:'🏡',nm:'Sua casa',tabs:['casa','hg'],row:1},{k:'pais',ic:'👨‍👩‍👧',nm:'Família',tabs:['fam'],row:1},{k:'cafe',ic:'💘',nm:'Encontros',tabs:['namoro'],row:1},
+     {k:'bar',ic:'🍻',nm:'Amigos',tabs:['amigos'],row:1},{k:'shop',ic:'🛍️',nm:'Shopping',tabs:['loja'],row:1},{k:'conc',ic:'🚗',nm:'Carros',tabs:['garagem'],row:1}],
   on(){try{return localStorage.getItem('escolaPoker.city')!=='0'}catch(e){return true}},
   set(v){try{localStorage.setItem('escolaPoker.city',v?'1':'0')}catch(e){}},
   byTab(t){return this.P.find(p=>p.tabs&&p.tabs.includes(t))},
   phase(h){return h<17?'dia':h<18.5?'tarde':h<19.6?'crep':'noite'},
   /* cabeçalho quando você está dentro de um lugar */
   head(tab,cnt){const P=this.byTab(tab),c=k=>cnt[k]||0;
-    return`<div class="cityhd"><button class="sm" data-city="map">🗺️ Cidade</button><div class="chn"><b>${P?P.ic+' '+P.nm:(VG.NM[tab]||tab)}</b><span>${CLK.txt()}</span></div></div>${P&&P.tabs.length>1?`<div class="lcats vsubs">${P.tabs.map(k=>`<button class="${tab===k?'on':''}" data-vt="${k}">${VG.NM[k]||k}${c(k)?` <b class="sbdg">${c(k)}</b>`:''}</button>`).join('')}</div>`:''}`},
+    return`<div class="cityhd"><button class="sm" data-city="map">🗺️ Cidade</button><div class="chn"><b>${P?P.ic+' '+P.nm:(VG.NM[tab]||tab)}</b></div></div>${P&&P.tabs.length>1?`<div class="lcats vsubs">${P.tabs.map(k=>`<button class="${tab===k?'on':''}" data-vt="${k}">${VG.NM[k]||k}${c(k)?` <b class="sbdg">${c(k)}</b>`:''}</button>`).join('')}</div>`:''}`},
   map(cnt){const c=k=>cnt[k]||0,cel=c('cel');
-    return`<div class="city"><div class="ctop"><span class="cclock">${CLK.txt()}</span><span class="muted" style="font-size:12px;flex:1">Toque num lugar</span><button class="cphone" data-city="p:bar" aria-label="Celular">📱${cel?`<b>${cel>9?'9+':cel}</b>`:''}</button><button class="sm" data-city="classic">≡ Abas</button></div>${this.svg(cnt)}</div>`},
+    return`<div class="city"><div class="ctop"><span style="font-size:13px;flex:1"><b>🗺️ Sua cidade</b> <span class="muted">· toque num lugar pra entrar</span></span><button class="sm" data-city="classic" title="Ver em lista">≡</button></div>${this.svg(cnt)}</div>`},
   svg(cnt){const s=LIFE.s,h=CAL.on()?CLK.now():12,ph=this.phase(h),N=ph==='noite',D=ph==='crep',k=N?.58:D?.4:ph==='tarde'?.12:0,M=(c)=>k?FACE.mix(c,N?'#0a1030':'#3a2050',k):c,R=FACE.rnd('city'+(s?s.day:0));
     const sky={dia:['#4f9fe0','#bfe3f7'],tarde:['#6a7fc0','#ffc98a'],crep:['#26285e','#e2795c'],noite:['#050a1c','#1a2350']}[ph];
     const lit=()=>N||D?(R()<.62?'#ffd98a':'#22304a'):(R()<.5?'#a8d4f0':'#7fb4d8');

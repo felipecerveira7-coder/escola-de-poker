@@ -3,7 +3,7 @@ const {chromium}=require('playwright');
  const errs=[];p.on('pageerror',e=>errs.push(e.message));
  await p.goto('file://'+require('path').resolve(__dirname,'../index.html')+'#vida');await p.waitForTimeout(1500);await p.evaluate(()=>{try{ttlClose()}catch(e){}});
  await p.evaluate(()=>{const A=LIVES.ALL().filter(n=>LIVES.s.bots[n]);const n=A[1],b=LIVES.s.bots[n];b.res={tours:23,wins:3,itm:9,profit:18450};b.pod=5;b.bank=184000;LIVES.relAdd(n,A[2],3);LIVES.relAdd(n,A[3],-3);LIVES.relAdd(n,'Você',2.2);LIVES.note(n,'Brigou com o dono do bar.');
-   CIRC.post({k:'vida',title:`${n} crava o Turbo de sábado`,body:'Venceu com um full house no river.'});LIFE.tab='cel';LIFE.open=null;renderLife();window.__n=n});
+   CIRC.post({k:'vida',title:`${n} crava o Turbo de sábado`,body:'Venceu com um full house no river.'});LIFE.tab='amigos';LIFE.open=null;renderLife();window.__n=n});
  await p.waitForTimeout(300);
  const n=await p.evaluate(()=>window.__n);
  await p.click(`.pfi[data-pf="${n}"]`);await p.waitForTimeout(300);await p.screenshot({path:'bp1.png'});

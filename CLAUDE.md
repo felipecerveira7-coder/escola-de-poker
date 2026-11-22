@@ -39,9 +39,17 @@ Os objetos globais:
 | `ARENA` | Mesa em tela cheia: cenário por lugar, mesa inclinada em 3D, cartas voando/virando, anel de tempo, chance de vitória no all-in, river em suspense |
 | `SFX` | Sons sintetizados com Web Audio (cartas, fichas, check, plateia, ambiente por lugar); mudo salvo em `localStorage` |
 | `CITY` | Mapa ilustrado da cidade que substitui as abas da Vida (céu muda com a hora); `≡ Abas` volta ao modo antigo |
+| `NOTEGO`, `WEEK` | Notificação tocável leva ao assunto; faixa "Próximos dias" na tela inicial |
 | `CINE` | Momentos de cinema: heads-up, mesa final, campeão com confete, manchete do jornal, eliminação, notificação de mensagem |
 
 A pasta `modules/` é histórica (fontes avulsas de versões antigas); a fonte de verdade é `src/`.
+
+## Onde fica cada coisa (não duplicar)
+
+- Barra do topo (`HUD`): saldo, energia, humor, hora. Avatar abre o perfil (com Closet); 📱 abre o celular (notificações e conversas).
+- Tela inicial da Vida: botões de avançar o dia, mapa da cidade, próximos dias, "Pra fazer agora".
+- Cada lugar do mapa abre uma aba; amigos/contatos ficam em `amigos`, home game junto da casa.
+- Antes de mostrar uma informação nova, veja se ela já existe em outro lugar.
 
 ## Padrões
 
