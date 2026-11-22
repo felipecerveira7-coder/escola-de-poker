@@ -41,6 +41,8 @@ Os objetos globais:
 | `CITY` | Mapa ilustrado da cidade que substitui as abas da Vida (céu muda com a hora); `≡ Abas` volta ao modo antigo |
 | `NOTEGO`, `WEEK` | Notificação tocável leva ao assunto; faixa "Próximos dias" na tela inicial |
 | `BIG`, `bigPanel`, `fieldFill` | Torneios grandes: Main Event Nacional (4x/ano, ~R$ 1 mi), Campeonato Latino (abril, ~R$ 3 mi), Mundial em Las Vegas (julho, 1º leva R$ 20 mi); campos de 108 completados com jogadores de fora; satélites; painel "Os grandes do ano" na Agenda |
+| `NAV` | Histórico de navegação; botão ‹ Voltar na barra do topo |
+| `dayTaken`, `regRefund` | Não deixa se inscrever no torneio de hoje se o dia já foi usado; inscrição que não deu pra jogar por dia ocupado é devolvida sem falta |
 | `CINE` | Momentos de cinema: heads-up, mesa final, campeão com confete, manchete do jornal, eliminação, notificação de mensagem |
 
 A pasta `modules/` é histórica (fontes avulsas de versões antigas); a fonte de verdade é `src/`.

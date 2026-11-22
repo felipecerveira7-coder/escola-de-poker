@@ -578,3 +578,4 @@ body.arena-on{overflow:hidden}
 .wk-d{min-height:0;width:108px}
 .bigrow b{font-size:14px}
 .agrow.bigrow{display:block}.bigrow .agact{margin-top:6px;text-align:left}.bigrow .vtag{white-space:nowrap}
+.hu-bk{flex:none;width:34px;height:34px;border-radius:50%;padding:0 0 3px;font-size:26px;line-height:1;font-weight:700;background:rgba(240,201,110,.14);border:1px solid var(--gold);color:var(--gold2);display:flex;align-items:center;justify-content:center;margin-right:-2px}

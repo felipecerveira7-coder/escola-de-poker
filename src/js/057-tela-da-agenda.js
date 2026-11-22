@@ -2,7 +2,7 @@
 function renderAgenda(){const t=CAL.today(),A=CAL.st();let h=calBar()+MIS.seg();if(MIS.view==='mis')return h+MIS.html();
   const evRow=(ev,d)=>{const r=A.reg[ev.key],dn=A.done[ev.key],E=ev.E,open=CAL.regOpen(ev),isToday=d===t,TO=(()=>{try{return TOUR}catch(e){return null}})(),inProg=!!(TO&&TO.g&&TO.g.ev&&TO.g.ev.key===ev.key);let act='';
     if(dn)act=dn.noshow?'<span class="bad">não foi</span>':`<span class="${dn.prize?'ok':'muted'}">${dn.place}º de ${dn.of}${dn.prize?` · R$ ${brl(dn.prize)}`:''}</span>`;
-    else if(isToday&&(r||open))act=`<button class="sm pri" data-ag="play:${ev.key}">${inProg&&TO.g.paused?`Jogar o Dia ${ev.part+1}`:r?(ev.part?`Jogar o Dia ${ev.part+1}`:'Jogar agora'):`Inscrever e jogar (R$ ${brl(E.buy)})`}</button>${!r&&open?(()=>{const c=SPX.payer(E);return c?` <button class="sm" data-ag="regsp:${ev.key}">🤝 Pela verba ${c.emo}</button>`:''})():''}`;
+    else if(isToday&&!r&&A.used[t]&&A.used[t]!==ev.key)act='<span class="muted">dia já usado</span>';else if(isToday&&(r||open))act=`<button class="sm pri" data-ag="play:${ev.key}">${inProg&&TO.g.paused?`Jogar o Dia ${ev.part+1}`:r?(ev.part?`Jogar o Dia ${ev.part+1}`:'Jogar agora'):`Inscrever e jogar (R$ ${brl(E.buy)})`}</button>${!r&&open?(()=>{const c=SPX.payer(E);return c?` <button class="sm" data-ag="regsp:${ev.key}">🤝 Pela verba ${c.emo}</button>`:''})():''}`;
     else if(r)act=`<span class="ok">✓ inscrito</span>${d===ev.first&&t<ev.first?` <button class="sm" data-ag="unreg:${ev.key}">cancelar</button>`:''}`;
     else if(ev.part)act='';
     else if(open)act=`<button class="sm" data-ag="reg:${ev.key}">Inscrever · R$ ${brl(E.buy)}</button>${(()=>{const c=SPX.payer(E);return c?` <button class="sm" data-ag="regsp:${ev.key}">🤝 Pela verba ${c.emo}</button>`:''})()}`;
