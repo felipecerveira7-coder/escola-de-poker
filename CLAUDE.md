@@ -36,6 +36,10 @@ Os objetos globais:
 | `AIX` | Chamadas à IA (`window.claude`), sempre com fallback sem IA |
 | `FACE` | Avatares ilustrados em SVG (bots, família, lendas, par, perfis, jogador) com expressões: feliz, neutro, triste, tilt, cansado, confiante |
 | `CHIPFX` | Fichas voando na mesa (apostas pro pote, pote pro vencedor) |
+| `ARENA` | Mesa em tela cheia: cenário por lugar, mesa inclinada em 3D, cartas voando/virando, anel de tempo, chance de vitória no all-in, river em suspense |
+| `SFX` | Sons sintetizados com Web Audio (cartas, fichas, check, plateia, ambiente por lugar); mudo salvo em `localStorage` |
+| `CITY` | Mapa ilustrado da cidade que substitui as abas da Vida (céu muda com a hora); `≡ Abas` volta ao modo antigo |
+| `CINE` | Momentos de cinema: heads-up, mesa final, campeão com confete, manchete do jornal, eliminação, notificação de mensagem |
 
 A pasta `modules/` é histórica (fontes avulsas de versões antigas); a fonte de verdade é `src/`.
 
@@ -60,5 +64,5 @@ Cada arquivo em `tests/` abre o `index.html` num celular simulado (390×860) e i
 
 1. ~~Separar o script em partes com build~~ (feito na v57).
 2. Trocar os wrappers em cadeia por chamadas diretas nas partes.
-3. Mesa em canvas/PixiJS (hoje: DOM + CSS + `CHIPFX`).
+3. Mesa em canvas/WebGL (hoje: DOM + CSS 3D + `ARENA`/`CHIPFX`).
 4. PWA completo com service worker (hoje só as meta tags de app no iPhone/Android).

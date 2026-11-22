@@ -137,7 +137,8 @@ const CHIPFX={
   pos(el){return[parseFloat(el.style.left),parseFloat(el.style.top)]}};
 {const _rt=Table.prototype.renderTable;Table.prototype.renderTable=function(){const tb=this.$&&this.$('table'),g=this.g;
   const old=tb?[...tb.querySelectorAll('.pchip')].map(e=>CHIPFX.pos(e)):[];_rt.apply(this,arguments);
+  try{if(typeof ARENA!=='undefined'&&tb&&g)ARENA.post(this,tb)}catch(e){console.warn(e)}
   try{if(!tb||!g)return;const now=tb.querySelectorAll('.pchip').length,C=[50,49];
-    if(old.length&&!now&&this._fxH===g.hands)old.forEach((p,i)=>CHIPFX.fly(tb,p,C,3,i%3===1?'g':i%3===2?'k':''));
-    if(g.over&&this._fxO!==g.hands){this._fxO=g.hands;const seats=tb.querySelectorAll('.pseat');g.players.forEach((p,i)=>{if(p.won>0&&seats[i])setTimeout(()=>CHIPFX.fly(tb,C,CHIPFX.pos(seats[i]),7,i%2?'g':''),old.length?380:60)})}
+    if(old.length&&!now&&this._fxH===g.hands){old.forEach((p,i)=>CHIPFX.fly(tb,p,C,3,i%3===1?'g':i%3===2?'k':''));if(typeof SFX!=='undefined')SFX.play('chip',{n:Math.min(6,old.length*2)})}
+    if(g.over&&this._fxO!==g.hands){this._fxO=g.hands;if(typeof SFX!=='undefined'&&g.players.some(p=>p.won>0))SFX.play(g.players[0].won>0?'win':'chip',{n:6,at:old.length?.38:.06});const seats=tb.querySelectorAll('.pseat');g.players.forEach((p,i)=>{if(p.won>0&&seats[i])setTimeout(()=>CHIPFX.fly(tb,C,CHIPFX.pos(seats[i]),7,i%2?'g':''),old.length?380:60)})}
     this._fxH=g.hands}catch(e){}}}

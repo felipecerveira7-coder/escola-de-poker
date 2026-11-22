@@ -4,7 +4,7 @@ const {chromium}=require('playwright');
  await p.goto('file://'+require('path').resolve(__dirname,'../index.html')+'#vida');await p.waitForTimeout(1500);await p.evaluate(()=>{try{ttlClose()}catch(e){};WALLET.s.bal=65400000;LIFE.s.items.push('bone','oculos','terno','jaqueta','moletom','rolex','patek','corrente','nicho','jordan');LIFE.s.look=null;HUD.last='';renderLife()});
  await p.waitForTimeout(500);await p.screenshot({path:'u1.png'});
  console.log('tab',await p.evaluate(()=>LIFE.tab),'hud',await p.evaluate(()=>!!document.getElementById('hud')&&getComputedStyle(document.getElementById('hud')).display));
- await p.click('[data-vg="pessoas"]');await p.waitForTimeout(300);console.log('tab after group',await p.evaluate(()=>LIFE.tab));await p.screenshot({path:'u2.png'});
+ await p.evaluate(()=>{CITY.set(false);renderLife()});await p.click('[data-vg="pessoas"]');await p.waitForTimeout(300);console.log('tab after group',await p.evaluate(()=>LIFE.tab));await p.screenshot({path:'u2.png'});
  await p.click('[data-vt="cel"]');await p.waitForTimeout(200);
  await p.click('[data-go="look"], #hud .hu-av');await p.waitForTimeout(300);await p.screenshot({path:'u3.png'});
  await p.click('#clOv [data-cl="tab|role"]');await p.waitForTimeout(200);await p.click('#clOv [data-cl^="role|tronco|terno"]');await p.waitForTimeout(200);await p.screenshot({path:'u4.png'});
