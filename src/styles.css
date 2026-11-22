@@ -576,3 +576,5 @@ body.arena-on{overflow:hidden}
 .wk-d>span:not(.wk-h){font-size:11.5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wk-i{color:#ffd9a0;font-weight:600}.wk-r{color:var(--ok);font-weight:600}.wk-e{color:var(--muted)}
 .wk-d{min-height:0;width:108px}
+.bigrow b{font-size:14px}
+.agrow.bigrow{display:block}.bigrow .agact{margin-top:6px;text-align:left}.bigrow .vtag{white-space:nowrap}

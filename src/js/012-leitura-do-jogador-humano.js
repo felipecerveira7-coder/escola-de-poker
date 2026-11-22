@@ -299,9 +299,9 @@ Responda só com JSON: {"replies":[{"from":"Nome","text":"..."}]}`;
   startEvent(ev,reg){const E=ev.E,x=STRUCTS[E.st],keys=Object.keys(STY);this.lastMsg='';this.stop();
     if(reg.staked)this.stakedNow=E.buy;this.paidNow=reg.paid||0;try{LIFE.onStart('tour',E.fmt==='mtt')}catch(e){}
     const base={stack:x.stack,hpl:E.hpl,sb:x.levels[0][0],bb:x.levels[0][1],levels:x.levels,anteType:x.anteType,structNm:x.nm,ev:{key:ev.key,nm:E.nm,idx:0,stops:E.stops||[],days:E.days||1,sat:E.sat?E.buy:0,buy:E.buy}};
-    const all=LIVES.ALL().filter(n=>LIVES.bio(n)&&LIVES.s.bots[n]),rich=all.filter(n=>LIVES.s.bots[n].bank>=E.buy*.8).sort(()=>Math.random()-.5),poor=all.filter(n=>!rich.includes(n)).sort(()=>Math.random()-.5),pool=[...rich,...poor].slice(0,E.N-1).sort(()=>Math.random()-.5);
+    const all=LIVES.ALL().filter(n=>LIVES.bio(n)&&LIVES.s.bots[n]),rich=all.filter(n=>LIVES.s.bots[n].bank>=E.buy*.8).sort(()=>Math.random()-.5),poor=all.filter(n=>!rich.includes(n)).sort(()=>Math.random()-.5),pool=[...rich,...poor].slice(0,E.N-1).sort(()=>Math.random()-.5);fieldFill(pool,E);
     if(E.fmt==='mtt'){const N=E.N,seat=pool.slice(0,8),others=pool.slice(8),tables=[];for(let k=0;k<others.length;k+=9)tables.push({id:tables.length+2,btn:Math.random()*9|0,ps:others.slice(k,k+9).map(n=>({name:n,style:LIVES.styleOf(n)||keys[Math.random()*keys.length|0],stack:x.stack}))});
-      this.startGame(Object.assign(base,{bots:8,field:N,buyin:E.buy,mtt:{seat,state:{N,buyin:E.buy,pays:CIRC.pays(N),tables,busted:[],news:[],bubble:false,itm:false,final:false}}}))}
+      this.startGame(Object.assign(base,{bots:8,field:N,buyin:E.buy,mtt:{seat,state:{N,buyin:E.buy,pays:E.pays||CIRC.pays(N),tables,busted:[],news:[],bubble:false,itm:false,final:false}}}))}
     else this.startGame(Object.assign(base,{bots:E.N-1,names:pool}));
     this.log(`<div class="lh lvl">${E.emo} ${E.nm} · buy-in R$ ${brl(E.buy)}${E.days?` · Dia 1 de ${E.days}`:''}</div>`)}
   rakeCut(amt){const g=this.g,H=g&&g.home;if(!H||!H.rake||g.board.length<3||amt<=0)return 0;const r=Math.min(Math.round(amt*H.rake.pct),H.rake.cap*g.bb);if(r<=0)return 0;

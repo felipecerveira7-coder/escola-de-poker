@@ -19,7 +19,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 /* calendário da semana na tela inicial: um olhar nos próximos compromissos */
 const WEEK={
   html(){if(!CAL.on())return'';const t=CAL.today(),A=CAL.st();let h='';
-    for(let d=t;d<t+10;d++){const ev=CAL.events(d),it=CAL.items(d),reg=ev.filter(e=>A.reg[e.key]),big=ev.some(e=>['main','etapa'].includes(e.id)),hol=HOL.of(d),[wd,dm]=CAL.fmt(d).split(', ');
+    for(let d=t;d<t+10;d++){const ev=CAL.events(d),it=CAL.items(d),reg=ev.filter(e=>A.reg[e.key]),big=ev.some(e=>bigIds().includes(e.id)),hol=HOL.of(d),[wd,dm]=CAL.fmt(d).split(', ');
       const lines=[...it.map(x=>`<span class="wk-i">${x.emo||'📌'} ${lx(x.title).slice(0,22)}</span>`),...reg.map(e=>`<span class="wk-r">✓ ${e.E.emo} ${e.E.nm.slice(0,20)}</span>`),...ev.filter(e=>!A.reg[e.key]).slice(0,2).map(e=>`<span class="wk-e">${e.E.emo} ${e.E.nm.slice(0,20)}${e.part?` · dia ${e.part+1}`:''}</span>`)];
       h+=`<button class="wk-d${d===t?' hoje':''}${big?' big':''}${it.length||reg.length?' busy':''}" data-wk="${d}"><span class="wk-h"><b>${d===t?'Hoje':wd}</b><span>${dm}</span>${hol?`<span title="${hol.nm}">${hol.emo}</span>`:''}</span>${lines.slice(0,3).join('')||'<span class="wk-e muted">livre</span>'}</button>`}
     return`<div class="panel wk"><h3>📅 Próximos dias <button class="sm" data-wk="all" style="float:right;font-family:inherit">Agenda completa ›</button></h3><div class="wk-row">${h}</div></div>`}};

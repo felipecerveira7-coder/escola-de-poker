@@ -16,7 +16,7 @@ const HOJE={
     (s.loans||[]).filter(l=>!l.paid&&l.due<=t).forEach(l=>add('🧾',`${l.n} te deve R$ ${brl(l.v)} (venceu)`,'cel:'+l.n));
     if(!LIFE.daily('post'))add('📲','Você ainda não postou hoje','tab:midia');
     if((HOL.of(t)||{}).id)add(HOL.of(t).emo,`${HOL.of(t).nm}: ${HOL.of(t).tip}`,HOL.of(t).id==='bf'?'tab:loja':'tab:fam');
-    let nx=null;for(let d=t+1;d<=t+30&&!nx;d++)CAL.events(d).forEach(e=>{if(!nx&&!e.part&&['main','etapa'].includes(e.id))nx={e,d}});
+    let nx=null;for(let d=t+1;d<=t+30&&!nx;d++)CAL.events(d).forEach(e=>{if(!nx&&!e.part&&bigIds().includes(e.id))nx={e,d}});
     const sp=LIFE.sps().map(c=>{const left=Math.max(0,c.end-t),req=Object.entries(c.req||{}),done=req.filter(([k,v])=>(c.done[k]||0)>=v).length;return`<div class="hsp"><span>${c.emo} ${c.nm.split(' (')[0]}</span><span class="${done===req.length?'ok':left<5?'bad':'muted'}">${done}/${req.length} metas · ${left}d</span></div>`}).join('');
     const ml=MOODL.list().slice(0,4);
     return`<div class="panel"><h3>📋 Pra fazer agora</h3>${rows.join('')||'<p class="muted" style="margin:0">Nada pendente. Que tal uma live, uma sessão online ou chamar alguém pra sair?</p>'}

@@ -590,6 +590,8 @@ body.arena-on{overflow:hidden}
 .wk-d>span:not(.wk-h){font-size:11.5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wk-i{color:#ffd9a0;font-weight:600}.wk-r{color:var(--ok);font-weight:600}.wk-e{color:var(--muted)}
 .wk-d{min-height:0;width:108px}
+.bigrow b{font-size:14px}
+.agrow.bigrow{display:block}.bigrow .agact{margin-top:6px;text-align:left}.bigrow .vtag{white-space:nowrap}
 </style>
 </head>
 <body>
@@ -1556,9 +1558,9 @@ Responda só com JSON: {"replies":[{"from":"Nome","text":"..."}]}`;
   startEvent(ev,reg){const E=ev.E,x=STRUCTS[E.st],keys=Object.keys(STY);this.lastMsg='';this.stop();
     if(reg.staked)this.stakedNow=E.buy;this.paidNow=reg.paid||0;try{LIFE.onStart('tour',E.fmt==='mtt')}catch(e){}
     const base={stack:x.stack,hpl:E.hpl,sb:x.levels[0][0],bb:x.levels[0][1],levels:x.levels,anteType:x.anteType,structNm:x.nm,ev:{key:ev.key,nm:E.nm,idx:0,stops:E.stops||[],days:E.days||1,sat:E.sat?E.buy:0,buy:E.buy}};
-    const all=LIVES.ALL().filter(n=>LIVES.bio(n)&&LIVES.s.bots[n]),rich=all.filter(n=>LIVES.s.bots[n].bank>=E.buy*.8).sort(()=>Math.random()-.5),poor=all.filter(n=>!rich.includes(n)).sort(()=>Math.random()-.5),pool=[...rich,...poor].slice(0,E.N-1).sort(()=>Math.random()-.5);
+    const all=LIVES.ALL().filter(n=>LIVES.bio(n)&&LIVES.s.bots[n]),rich=all.filter(n=>LIVES.s.bots[n].bank>=E.buy*.8).sort(()=>Math.random()-.5),poor=all.filter(n=>!rich.includes(n)).sort(()=>Math.random()-.5),pool=[...rich,...poor].slice(0,E.N-1).sort(()=>Math.random()-.5);fieldFill(pool,E);
     if(E.fmt==='mtt'){const N=E.N,seat=pool.slice(0,8),others=pool.slice(8),tables=[];for(let k=0;k<others.length;k+=9)tables.push({id:tables.length+2,btn:Math.random()*9|0,ps:others.slice(k,k+9).map(n=>({name:n,style:LIVES.styleOf(n)||keys[Math.random()*keys.length|0],stack:x.stack}))});
-      this.startGame(Object.assign(base,{bots:8,field:N,buyin:E.buy,mtt:{seat,state:{N,buyin:E.buy,pays:CIRC.pays(N),tables,busted:[],news:[],bubble:false,itm:false,final:false}}}))}
+      this.startGame(Object.assign(base,{bots:8,field:N,buyin:E.buy,mtt:{seat,state:{N,buyin:E.buy,pays:E.pays||CIRC.pays(N),tables,busted:[],news:[],bubble:false,itm:false,final:false}}}))}
     else this.startGame(Object.assign(base,{bots:E.N-1,names:pool}));
     this.log(`<div class="lh lvl">${E.emo} ${E.nm} · buy-in R$ ${brl(E.buy)}${E.days?` · Dia 1 de ${E.days}`:''}</div>`)}
   rakeCut(amt){const g=this.g,H=g&&g.home;if(!H||!H.rake||g.board.length<3||amt<=0)return 0;const r=Math.min(Math.round(amt*H.rake.pct),H.rake.cap*g.bb);if(r<=0)return 0;
@@ -3930,7 +3932,7 @@ const HOJE={
     (s.loans||[]).filter(l=>!l.paid&&l.due<=t).forEach(l=>add('🧾',`${l.n} te deve R$ ${brl(l.v)} (venceu)`,'cel:'+l.n));
     if(!LIFE.daily('post'))add('📲','Você ainda não postou hoje','tab:midia');
     if((HOL.of(t)||{}).id)add(HOL.of(t).emo,`${HOL.of(t).nm}: ${HOL.of(t).tip}`,HOL.of(t).id==='bf'?'tab:loja':'tab:fam');
-    let nx=null;for(let d=t+1;d<=t+30&&!nx;d++)CAL.events(d).forEach(e=>{if(!nx&&!e.part&&['main','etapa'].includes(e.id))nx={e,d}});
+    let nx=null;for(let d=t+1;d<=t+30&&!nx;d++)CAL.events(d).forEach(e=>{if(!nx&&!e.part&&bigIds().includes(e.id))nx={e,d}});
     const sp=LIFE.sps().map(c=>{const left=Math.max(0,c.end-t),req=Object.entries(c.req||{}),done=req.filter(([k,v])=>(c.done[k]||0)>=v).length;return`<div class="hsp"><span>${c.emo} ${c.nm.split(' (')[0]}</span><span class="${done===req.length?'ok':left<5?'bad':'muted'}">${done}/${req.length} metas · ${left}d</span></div>`}).join('');
     const ml=MOODL.list().slice(0,4);
     return`<div class="panel"><h3>📋 Pra fazer agora</h3>${rows.join('')||'<p class="muted" style="margin:0">Nada pendente. Que tal uma live, uma sessão online ou chamar alguém pra sair?</p>'}
@@ -4521,7 +4523,7 @@ function renderAgenda(){const t=CAL.today(),A=CAL.st();let h=calBar()+MIS.seg();
     else if(ev.part)act='';
     else if(open)act=`<button class="sm" data-ag="reg:${ev.key}">Inscrever · R$ ${brl(E.buy)}</button>${(()=>{const c=SPX.payer(E);return c?` <button class="sm" data-ag="regsp:${ev.key}">🤝 Pela verba ${c.emo}</button>`:''})()}`;
     else if(t<ev.first-E.reg)act=`<span class="muted">inscrições ${CAL.fmt(ev.first-E.reg)}</span>`;else act='<span class="muted">encerrado</span>';
-    return`<div class="agrow"><div><span class="agemo">${E.emo}</span> <b>${E.nm}</b>${E.days?` <span class="vtag">Dia ${ev.part+1}${ev.part===E.days-1?(E.days===3?' · mesa final':' · dia final'):''}</span>`:''}${r&&r.ticket?' <span class="vtag">🎫 pacote</span>':''}${r&&r.sp?` <span class="vtag">🤝 ${r.spNm}${r.cut?` · ${Math.round(r.cut*100)}%`:''}</span>`:''}<div class="muted" style="font-size:12px">${E.fmt==='sng'?'Mesa única':'Multimesas'} · ${E.N} jogadores · buy-in R$ ${brl(E.buy)}${E.travel?` + viagem R$ ${brl(E.travel)}`:''} · ${E.sat?`1º ganha o pacote da etapa (R$ ${brl(EVTS.etapa.buy+EVTS.etapa.travel)})`:`1º leva R$ ${brl(E.buy*E.N*CIRC.pays(E.N)[0])}`}${!r&&!dn&&!ev.part&&d>=t?(()=>{const b=SOC.brm(E);return` · <span class="brm ${b[0]}">${b[1]}</span>`})():''}</div></div><div class="agact">${act}</div></div>`};
+    return`<div class="agrow"><div><span class="agemo">${E.emo}</span> <b>${E.nm}</b>${E.days?` <span class="vtag">Dia ${ev.part+1}${ev.part===E.days-1?(E.days===3?' · mesa final':' · dia final'):''}</span>`:''}${r&&r.ticket?' <span class="vtag">🎫 pacote</span>':''}${r&&r.sp?` <span class="vtag">🤝 ${r.spNm}${r.cut?` · ${Math.round(r.cut*100)}%`:''}</span>`:''}<div class="muted" style="font-size:12px">${E.fmt==='sng'?'Mesa única':'Multimesas'} · ${E.N} jogadores · buy-in R$ ${brl(E.buy)}${E.travel?` + viagem R$ ${brl(E.travel)}`:''} · ${E.sat?`1º ganha o pacote da etapa (R$ ${brl((()=>{const X=EVTS[(E.target||'etapa@').split('@')[0]]||EVTS.etapa;return X.buy+(X.travel||0)})())})`:`1º leva R$ ${brl(E.abs?E.abs[0]:E.buy*E.N*CIRC.pays(E.N)[0])}${E.minFame&&LIFE.s.fame<E.minFame?` · <span class="bad">fama ${E.minFame} ou satélite</span>`:''}`}${!r&&!dn&&!ev.part&&d>=t?(()=>{const b=SOC.brm(E);return` · <span class="brm ${b[0]}">${b[1]}</span>`})():''}</div></div><div class="agact">${act}</div></div>`};
   const itRow=it=>`<div class="agrow"><div><span class="agemo">${it.emo}</span> <b>${lx(it.title)}</b><div class="muted" style="font-size:12px">${lx(it.desc||'')}</div></div><div class="agact">${it.day===t?`<button class="sm pri" data-ag="do:${it.id}">Fazer</button>`:''}${['hg','lesson','fam','love'].includes(it.kind)?` <button class="sm" data-ag="cx:${it.id}">desmarcar</button>`:''}${SOC.NG.includes(it.kind)?` <button class="sm" data-ag="ng:${it.id}">${SOC.ngOpen===it.id?'fechar':'🗣️ negociar'}</button>`:''}</div></div>${SOC.ngOpen===it.id?SOC.negRow(it):''}`;
   const today=CAL.events(t),its=CAL.items(t);
   h+=`<div class="panel"><h3>Hoje · ${CAL.fmt(t)}</h3>${A.used[t]?'<div class="vsum">✅ Dia ocupado. Você ainda pode jogar cash no clube. Quando quiser, avance o calendário.</div>':''}
@@ -4529,7 +4531,7 @@ function renderAgenda(){const t=CAL.today(),A=CAL.st();let h=calBar()+MIS.seg();
     <div class="muted" style="font-size:12px;margin-top:8px">Só dá pra fazer <b>uma</b> coisa por dia (um torneio ou um compromisso). O cash do clube fica aberto todo dia.</div></div>`;
   let up='';for(let d=t+1;d<=t+14;d++){const ev=CAL.events(d),it=CAL.items(d);if(!ev.length&&!it.length)continue;
     up+=`<div class="agday${CAL.dow(d)===0||CAL.dow(d)===6?' we':''}"><div class="agd">${CAL.fmt(d)}${CAL.rel(d)?` · ${CAL.rel(d)}`:''}</div>${ev.map(e=>evRow(e,d)).join('')}${it.map(itRow).join('')}</div>`}
-  h+=SOC.panel();
+  h+=bigPanel();h+=SOC.panel();
   h+=`<div class="panel"><h3>Próximos 14 dias</h3>${up}<p class="muted" style="font-size:12px">Torneios grandes avisam no Celular quando abrem as inscrições. A inscrição é paga na hora e se você faltar perde o buy-in. O Main Event dura 3 dias: no fim do Dia 1 e do Dia 2 as fichas ficam guardadas até o dia seguinte. No segundo fim de semana do mês tem etapa do Circuito Nacional em outra cidade (2 dias, com viagem). Os satélites de terça e quinta antes dela dão o pacote completo.</p></div>`;
   return h}
 function bindAgenda(el,after){bindCalBar(el,after);el.querySelectorAll('[data-ag]').forEach(b=>b.onclick=()=>{const[a,...r]=b.dataset.ag.split(':'),k=r.join(':');let m='';
@@ -5467,13 +5469,67 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 /* calendário da semana na tela inicial: um olhar nos próximos compromissos */
 const WEEK={
   html(){if(!CAL.on())return'';const t=CAL.today(),A=CAL.st();let h='';
-    for(let d=t;d<t+10;d++){const ev=CAL.events(d),it=CAL.items(d),reg=ev.filter(e=>A.reg[e.key]),big=ev.some(e=>['main','etapa'].includes(e.id)),hol=HOL.of(d),[wd,dm]=CAL.fmt(d).split(', ');
+    for(let d=t;d<t+10;d++){const ev=CAL.events(d),it=CAL.items(d),reg=ev.filter(e=>A.reg[e.key]),big=ev.some(e=>bigIds().includes(e.id)),hol=HOL.of(d),[wd,dm]=CAL.fmt(d).split(', ');
       const lines=[...it.map(x=>`<span class="wk-i">${x.emo||'📌'} ${lx(x.title).slice(0,22)}</span>`),...reg.map(e=>`<span class="wk-r">✓ ${e.E.emo} ${e.E.nm.slice(0,20)}</span>`),...ev.filter(e=>!A.reg[e.key]).slice(0,2).map(e=>`<span class="wk-e">${e.E.emo} ${e.E.nm.slice(0,20)}${e.part?` · dia ${e.part+1}`:''}</span>`)];
       h+=`<button class="wk-d${d===t?' hoje':''}${big?' big':''}${it.length||reg.length?' busy':''}" data-wk="${d}"><span class="wk-h"><b>${d===t?'Hoje':wd}</b><span>${dm}</span>${hol?`<span title="${hol.nm}">${hol.emo}</span>`:''}</span>${lines.slice(0,3).join('')||'<span class="wk-e muted">livre</span>'}</button>`}
     return`<div class="panel wk"><h3>📅 Próximos dias <button class="sm" data-wk="all" style="float:right;font-family:inherit">Agenda completa ›</button></h3><div class="wk-row">${h}</div></div>`}};
 {const _hh=HOJE.html;HOJE.html=function(){return WEEK.html()+_hh.apply(this,arguments)}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-wk]');if(!b)return;e.preventDefault();e.stopPropagation();try{MIS.view='ag'}catch(x){}location.hash='#torneio';
   const d=b.dataset.wk;if(d!=='all')setTimeout(()=>{const el=[...document.querySelectorAll('#tourRoot .agday,#tourRoot h3,#tourRoot .nsec')].find(x=>x.textContent.includes(CAL.fmt(+d).split(', ')[1]));if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},250)},true);
+/* =============== v60: torneios grandes — Main Event Nacional, Campeonato Latino-Americano e Mundial em Las Vegas =============== */
+/* premiação de campo grande: paga ~14% (15 lugares) */
+const PAY108=[.264,.16,.115,.09,.07,.055,.045,.037,.03,.025,.025,.022,.022,.02,.02];
+{const _p=CIRC.pays;CIRC.pays=function(of){return of>=60?PAY108.slice():_p.call(this,of)}}
+/* Mundial: a sua chave tem 108 jogadores, mas a premiação é a de um campo de 8 mil (valores em R$) */
+const MUNDIAL_R=[20e6,12e6,8e6,6e6,4.8e6,3.8e6,3e6,2.5e6,2e6,1.4e6,1.1e6,9e5,7.5e5,6e5,5e5,4.2e5,3.6e5,3e5];
+EVTS.nac={nm:'Main Event Nacional',emo:'💎',fmt:'mtt',buy:10000,N:108,st:'ps',hpl:15,reg:21,days:3,stops:[7,13],travel:2500,
+  desc:'O maior torneio do país, 4 vezes por ano em São Paulo: 108 jogadores em 3 dias e cerca de R$ 1 milhão de prêmio. Satélites de R$ 1 mil às quartas.'};
+EVTS.latam={nm:'Campeonato Latino-Americano',emo:'🌎',fmt:'mtt',buy:29000,N:108,st:'ps',hpl:15,reg:30,days:3,stops:[7,13],travel:6000,minFame:35,
+  desc:'Uma vez por ano em Punta del Este: US$ 5 mil de entrada (R$ 29 mil), 108 jogadores e mais de R$ 3 milhões de prêmio. Precisa de fama 35, ou entre pelo satélite.'};
+EVTS.mundial={nm:'Mundial de Poker · Las Vegas',emo:'🥇',fmt:'mtt',buy:58000,N:108,st:'ps',hpl:15,reg:45,days:3,stops:[7,13],travel:15000,minFame:50,abs:MUNDIAL_R,
+  desc:'O Main Event do Mundial, em julho: US$ 10 mil de entrada (R$ 58 mil). Você joga uma chave de 108, com a premiação de um campo de 8 mil: o campeão leva R$ 20 milhões e o bracelete. Fuso de 6 horas: chega cansado. Precisa de fama 50, ou entre pelo satélite.'};
+EVTS.mundial.pays=MUNDIAL_R.map(v=>v/(EVTS.mundial.N*EVTS.mundial.buy));
+const BIG={
+  L:[{id:'nac',months:[2,5,8,11],wd:4,nth:3,city:'São Paulo',sat:{dow:3,buy:1000,nm:'Satélite Nacional'}},
+     {id:'latam',months:[3],wd:1,nth:1,city:'Punta del Este',sat:{dow:1,buy:3000,nm:'Satélite Latino'}},
+     {id:'mundial',months:[6],wd:1,nth:1,city:'Las Vegas',sat:{dow:0,buy:5000,nm:'Satélite online pro Mundial'}}],
+  ids:['main','etapa','nac','latam','mundial'],
+  /* dia do jogo em que começa o evento B no mês de d (ou null) */
+  start(B,d){const t=CAL.date(d),y=t.getFullYear(),m=t.getMonth();if(!B.months.includes(m))return null;const x=new Date(y,m,1,12);while(x.getDay()!==B.wd)x.setDate(x.getDate()+1);x.setDate(x.getDate()+7*(B.nth-1));let s=Math.round((x.getTime()-LIVES.s.calStart)/864e5)+1;const ms=CAL.mainStart(s);if(ms&&s+2>=ms&&s<=ms+2)s-=7;return s},
+  next(B,d){for(let k=0;k<400;k+=20){const s=this.start(B,d+k);if(s&&s>d)return s}return null},
+  ev(B,s,d){const E=EVTS[B.id];return{id:B.id,key:B.id+'@'+s,first:s,part:d-s,E:Object.assign({},E,{nm:B.id==='nac'?`${E.nm} · ${B.city}`:E.nm})}}};
+{const _ev=CAL.events;CAL.events=function(d){for(const B of BIG.L){const s=BIG.start(B,d);if(s!=null&&d>=s&&d<s+EVTS[B.id].days)return[BIG.ev(B,s,d)]}
+  const out=_ev.call(this,d);if(out.length&&out[0].id==='main')return out;const w=this.dow(d);
+  BIG.L.forEach(B=>{if(w!==B.sat.dow)return;const ns=BIG.next(B,d);if(ns&&ns-d<=21)out.push({id:'sat',key:`sat@${d}@${B.id}`,first:d,part:0,E:Object.assign({},EVTS.sat,{nm:`${B.sat.nm} · ${CAL.fmt(ns)}`,emo:'🎫',buy:B.sat.buy,target:B.id+'@'+ns,desc:`Mesa única de 9. O campeão ganha o pacote do ${EVTS[B.id].nm}: inscrição, passagem e hotel (R$ ${brl(EVTS[B.id].buy+EVTS[B.id].travel)}). O 2º recebe a inscrição de volta.`})})});
+  return out}}
+/* fama mínima pros internacionais (o satélite dá o pacote sem exigir fama) */
+{const _rg=CAL.register;CAL.register=function(key){const A=this.st(),ev=this.byKey(key);if(ev&&ev.E.minFame&&LIFE.s.fame<ev.E.minFame&&!(A.tick&&A.tick[key])&&!A.reg[key])return`O ${ev.E.nm} é por convite: precisa de fama ${ev.E.minFame} (você tem ${Math.round(LIFE.s.fame)}). Dá pra entrar ganhando um satélite.`;return _rg.apply(this,arguments)}}
+/* chegada a Las Vegas: fuso pesa */
+{const _pl=CAL.play;CAL.play=function(key){const ev=this.byKey(key),t=this.today();if(ev&&ev.id==='mundial'&&t===ev.first&&!(LIFE.s.jet===key)){LIFE.s.jet=key;LIFE.s.energy=Math.max(0,LIFE.s.energy-15);LIFE.note('✈️','Fuso horário em Las Vegas','Seis horas de diferença: você chegou cansado. −15 de energia.')}return _pl.apply(this,arguments)}}
+/* título no Mundial vira bracelete na estante */
+{const _fn=CAL.finish;CAL.finish=function(key,res){_fn.apply(this,arguments);try{const id=key.split('@')[0];if(BIG.ids.includes(id)&&id!=='main'&&id!=='etapa'&&res&&res.place){LIFE.addFame(res.place===1?(id==='mundial'?12:id==='latam'?7:4):res.prize?1.5:.5);
+    if(res.place===1&&id==='mundial'){TROPH.st().push({k:'mundial',nm:'Main Event do Mundial (bracelete)',emo:'🥇',d:CAL.today()});CIRC.post({k:'vida',title:`${CIRC.me()} é campeão mundial!`,body:'Bracelete e R$ 20 milhões em Las Vegas. O poker brasileiro para pra comemorar.'})}
+    else if(res.prize)CIRC.post({k:'vida',title:`${CIRC.me()} premia no ${EVTS[id].nm}`,body:`${res.place}º lugar e R$ ${brl(res.prize)}.`});LIFE.commit()}}catch(e){console.warn(e)}}}
+/* ranking, imprensa e a tela inicial tratam os novos como grandes */
+RK.EVC.nac='nac';RK.EVC.latam='latam';RK.EVC.mundial='mundial';RK.AN.nac=['Main Event Nacional',1];RK.AN.latam=['Campeonato Latino-Americano',1];RK.AN.mundial=['Main Event do Mundial',1];
+{const _nd=PRESS.need;PRESS.need=function(key){return _nd.call(this,key)||['nac','latam','mundial'].includes(key.split('@')[0])}}
+function bigIds(){return['main','etapa','nac','latam','mundial']}
+/* completa o campo com jogadores de fora do circuito (cada evento grande tem gente de outras cidades e países) */
+function fieldFill(pool,E){const need=E.N-1-pool.length;if(need<=0)return;const intl=E.buy>=20000,used=new Set(pool);
+  const BR=['Marcos','Henrique','Vitor','Alan','Fernando','Ricardo','Diego','Murilo','Thiago','Bruna','Juliana','Daniela','Rafael','Leonardo','Gabriela','Kauã','Pietro','Otávio','Renan','Isabela','Caio','Heitor','Lívia','Arthur','Nicolas','Sofia','Enzo','Rodrigo','Hugo','Valéria'];
+  const UF=['SP','RJ','MG','PR','SC','BA','PE','CE','DF','GO','ES','RS'];
+  const IN=['Daniel','Erik','Phil','Justin','Fedor','Adrian','Stephen','Bryn','Isaac','Mikita','Jason','Alex','Maria','Liv','Vanessa','Kristen','Sam','Ole','Timo','Jonathan','Paul','Nick','Igor','Elky','Chris','Mike','Joao','Santiago','Mateo','Lucas'];
+  const CO=['EUA','Canadá','Alemanha','Reino Unido','Argentina','Uruguai','Chile','México','Espanha','França','Rússia','Japão','Coreia','Bulgária','Suécia','Holanda','Portugal','Colômbia','Peru','Austrália'];
+  for(let i=0;pool.length<E.N-1&&i<4000;i++){const a=intl&&Math.random()<.75?pickA(IN):pickA(BR),b=intl&&Math.random()<.75?pickA(CO):pickA(UF),n=`${a} (${b})`;if(!used.has(n)){used.add(n);pool.push(n)}}
+  pool.sort(()=>Math.random()-.5)}
+['Bruna','Juliana','Daniela','Gabriela','Isabela','Sofia','Lívia','Valéria','Maria','Vanessa','Kristen','Liv'].forEach(n=>FEM.add(n));{const _f=FACE.isF;FACE.isF=function(n){return _f.call(this,String(n).split(' (')[0])}}
+/* painel na Agenda: a escada dos grandes do ano */
+function bigPanel(){if(!window.__bigOk)return'';try{const t=CAL.today(),A=CAL.st();const L=[{id:'main',next:()=>{for(let d=t;d<t+40;d++){const ms=CAL.mainStart(d);if(ms&&ms>=t)return ms}return null}},{id:'etapa',next:()=>{for(const k of[0,20,40]){const e=CAL.etapaStart(t+k);if(e>=t)return e}return null}},...BIG.L.map(B=>({id:B.id,next:()=>{const s=BIG.start(B,t);return s&&s+EVTS[B.id].days>t?s:BIG.next(B,t)}}))];
+    const rows=L.map(x=>{const s=x.next();if(!s)return'';const ev=CAL.events(s).find(e=>e.id===x.id);if(!ev)return'';const E=ev.E,r=A.reg[ev.key],open=CAL.regOpen(ev),pool=E.abs?E.abs.reduce((a,v)=>a+v,0):E.buy*E.N,first=E.abs?E.abs[0]:Math.round(E.buy*E.N*CIRC.pays(E.N)[0]),lock=E.minFame&&LIFE.s.fame<E.minFame&&!r;
+      const st=r?'<span class="ok">✓ inscrito</span>':open?(lock?`<span class="bad">fama ${E.minFame} ou satélite</span>`:`<button class="sm pri" data-ag="reg:${ev.key}">Inscrever · R$ ${brl(E.buy+(E.travel||0))}</button>`):`<span class="muted">inscrições a partir de ${CAL.fmt(ev.first-E.reg)}</span>`;
+      return`<div class="agrow bigrow"><div><span class="agemo">${E.emo}</span> <b>${E.nm}</b> <span class="vtag">${CAL.fmt(s)}${s-t>0?` · em ${s-t} dias`:' · hoje'}</span><div class="muted" style="font-size:12px">Entrada R$ ${brl(E.buy)}${E.travel?` + viagem R$ ${brl(E.travel)}`:''} · ${E.abs?'campo de 8 mil jogadores':`prêmio total R$ ${pool>=1e6?(pool/1e6).toFixed(1).replace('.',',')+' milhões':brl(pool)}`} · 1º leva R$ ${first>=1e6?(first/1e6).toFixed(1).replace('.',',')+' mi':brl(first)}</div></div><div class="agact">${st}</div></div>`}).join('');
+    return`<div class="panel"><h3>💎 Os grandes do ano</h3>${rows}<p class="muted" style="font-size:12px;margin:6px 0 0">Os satélites aparecem na agenda nas semanas antes de cada um: o campeão ganha inscrição, passagem e hotel.</p></div>`}catch(e){console.warn(e);return''}}
+window.__bigOk=true;try{if(!TOUR.g&&CAL.on())TOUR.render()}catch(e){}
 </script>
 </body>
 </html>
