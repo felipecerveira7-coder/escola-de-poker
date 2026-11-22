@@ -1,0 +1,14 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:390,height:860}});
+ const errs=[];p.on('pageerror',e=>errs.push(e.message));
+ await p.goto('file://'+require('path').resolve(__dirname,'../index.html')+'#jogar');await p.waitForTimeout(1500);await p.evaluate(()=>{try{ttlClose()}catch(e){};WALLET.s.bal=50000});
+ await p.evaluate(()=>CASH.render());await p.waitForTimeout(200);await p.screenshot({path:'o_setup.png'});
+ const c0=await p.evaluate(()=>CLK.fmt());await p.click('#cashRoot [data-r="bStart"]');await p.waitForTimeout(1500);
+ console.log('online',await p.evaluate(()=>CASH.g.online+' '+CASH.g.players.map(x=>x.name).join(',')),'clock',c0);
+ await p.screenshot({path:'o_table.png'});
+ await p.evaluate(()=>{CASH.g.hands=140;CASH.cashOut()});await p.waitForTimeout(300);
+ console.log('out',await p.evaluate(()=>CASH.lastMsg.replace(/<[^>]+>/g,'')),'clock',await p.evaluate(()=>CLK.fmt()));
+ await p.selectOption('#cashRoot [data-r="sWhere"]','live');await p.click('#cashRoot [data-r="bStart"]');await p.waitForTimeout(1500);
+ console.log('live',await p.evaluate(()=>!!CASH.g.online+' '+CASH.g.players.map(x=>x.name).join(',')),'clock',await p.evaluate(()=>CLK.fmt()));
+ await p.evaluate(()=>{CASH.g.hands=30;CASH.cashOut()});console.log('clock after live',await p.evaluate(()=>CLK.fmt()));
+ console.log('errors',errs);await b.close()})();
