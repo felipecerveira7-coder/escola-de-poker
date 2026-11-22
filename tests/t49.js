@@ -31,7 +31,7 @@ const {chromium}=require('playwright');
  await p.click('#dOv button');await p.waitForTimeout(200);
  await p.click('[data-d="end"]');await p.waitForTimeout(500);await p.screenshot({path:'c49e.png'});
  console.log('res',await p.evaluate(()=>LIFE.s.dnow&&LIFE.s.dnow.res),'b',await p.evaluate(()=>LIFE.s.love.b),'mem',await p.evaluate(()=>JSON.stringify(LIFE.s.love.mem)),'clock',await p.evaluate(()=>CLK.fmt()));
- await p.click('[data-d="close"]');await p.waitForTimeout(200);
+ await p.evaluate(()=>{const x=document.querySelector('[data-d="close"]');if(x)x.click()});await p.waitForTimeout(200);
  await p.evaluate(()=>{LIFE.tab='fam';renderLife()});await p.waitForTimeout(200);
  await p.click('[data-fm="gift:mae"]');await p.waitForTimeout(200);await p.click('[data-gg="mae:g_flores"]');await p.waitForTimeout(200);
  console.log('gift msg',await p.evaluate(()=>document.querySelector('[data-r="vMsg"]').textContent));

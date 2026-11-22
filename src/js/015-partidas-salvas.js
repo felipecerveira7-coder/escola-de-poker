@@ -1,0 +1,1 @@
+/* ----- partidas salvas (continuar depois) ----- */

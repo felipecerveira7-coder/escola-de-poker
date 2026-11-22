@@ -1,0 +1,23 @@
+/* ----- avatar desenhado com o que você veste ----- */
+const AV={
+  svg(ctx,sz){if(!LIFE.s)return'';const L=OUT.st(),A=L.av,W=c=>L[ctx]&&Object.values(L[ctx]).includes(c),P=['#f1d3b6','#e3b48f','#c68b5e','#8d5a3b','#5a3a26'][A.pele||0],H=A.cor||'#2b1d14',id='a'+Math.random().toString(36).slice(2,7);
+    const top=W('terno')?'terno':W('jaqueta')?'jaqueta':W('camisa')?'camisa':W('moletom')?'moletom':'camiseta';
+    const body={camiseta:`<path d="M14 120 C16 92 34 84 60 84 C86 84 104 92 106 120Z" fill="#3f7d64"/>`,
+      moletom:`<path d="M12 120 C14 90 32 80 60 80 C88 80 106 90 108 120Z" fill="#6b7380"/><path d="M38 84 C42 98 78 98 82 84" fill="none" stroke="#4c535e" stroke-width="5"/><line x1="54" y1="94" x2="52" y2="108" stroke="#d9d9d9" stroke-width="2"/><line x1="66" y1="94" x2="68" y2="108" stroke="#d9d9d9" stroke-width="2"/>`,
+      camisa:`<path d="M14 120 C16 92 34 84 60 84 C86 84 104 92 106 120Z" fill="#f2f2f2"/><path d="M48 84 L60 98 L72 84" fill="#fff" stroke="#cfcfcf" stroke-width="1.5"/><circle cx="60" cy="104" r="1.6" fill="#bbb"/><circle cx="60" cy="113" r="1.6" fill="#bbb"/>`,
+      jaqueta:`<path d="M14 120 C16 92 34 84 60 84 C86 84 104 92 106 120Z" fill="#1d1d1f"/><path d="M50 86 L60 120 L70 86 Z" fill="#3f7d64"/><path d="M44 86 L54 106 L50 86Z M76 86 L66 106 L70 86Z" fill="#333"/>`,
+      terno:`<path d="M14 120 C16 92 34 84 60 84 C86 84 104 92 106 120Z" fill="#1f2a44"/><path d="M50 86 L60 120 L70 86 Z" fill="#fff"/><path d="M57 90 L63 90 L61 110 L60 113 L59 110Z" fill="#a51f2d"/><path d="M46 86 L56 108 L50 86Z M74 86 L64 108 L70 86Z" fill="#2c3a5c"/>`}[top];
+    const hair={curto:`<path d="M37 47 C36 27 50 20 60 20 C72 20 85 27 83 47 C80 38 72 33 60 33 C48 33 40 38 37 47Z" fill="${H}"/>`,raspado:`<path d="M39 44 C40 29 50 24 60 24 C70 24 80 29 81 44 C76 37 69 34 60 34 C51 34 44 37 39 44Z" fill="${H}" opacity=".55"/>`,
+      cacheado:`<g fill="${H}"><circle cx="42" cy="38" r="8"/><circle cx="50" cy="29" r="8"/><circle cx="60" cy="26" r="9"/><circle cx="70" cy="29" r="8"/><circle cx="78" cy="38" r="8"/></g>`,longo:`<path d="M35 70 C30 40 42 20 60 20 C78 20 90 40 85 70 C82 52 80 40 60 34 C40 40 38 52 35 70Z" fill="${H}"/>`,careca:''}[A.cab||'curto'];
+    const beard={sem:'',curta:`<path d="M42 58 C44 74 52 80 60 80 C68 80 76 74 78 58 C74 70 68 74 60 74 C52 74 46 70 42 58Z" fill="${H}" opacity=".45"/>`,cheia:`<path d="M40 54 C40 76 50 84 60 84 C70 84 80 76 80 54 C76 70 70 74 60 74 C50 74 44 70 40 54Z" fill="${H}"/>`,cavanhaque:`<path d="M54 70 C54 78 57 80 60 80 C63 80 66 78 66 70 C63 73 57 73 54 70Z" fill="${H}"/>`}[A.barba||'sem'];
+    return`<svg class="avsvg" width="${sz}" height="${sz}" viewBox="0 0 120 120" aria-label="Seu avatar"><defs><clipPath id="${id}"><circle cx="60" cy="60" r="58"/></clipPath><radialGradient id="${id}g" cx=".5" cy=".3"><stop offset="0" stop-color="#1f6a50"/><stop offset="1" stop-color="#0c2f23"/></radialGradient></defs>
+      <g clip-path="url(#${id})"><rect width="120" height="120" fill="url(#${id}g)"/>${body}<rect x="53" y="70" width="14" height="16" rx="4" fill="${P}"/>
+      ${W('corrente')?'<path d="M47 86 C52 98 68 98 73 86" fill="none" stroke="#e9c35a" stroke-width="2.6"/>':''}
+      <ellipse cx="60" cy="52" rx="22" ry="25" fill="${P}"/><ellipse cx="38" cy="54" rx="3.5" ry="5" fill="${P}"/><ellipse cx="82" cy="54" rx="3.5" ry="5" fill="${P}"/>${hair}${beard}
+      ${W('oculos')?'<g><rect x="42" y="45" width="15" height="9" rx="3" fill="#111"/><rect x="63" y="45" width="15" height="9" rx="3" fill="#111"/><line x1="57" y1="49" x2="63" y2="49" stroke="#111" stroke-width="2"/></g>':'<circle cx="51" cy="50" r="2.4" fill="#2a2a2a"/><circle cx="69" cy="50" r="2.4" fill="#2a2a2a"/>'}
+      <path d="M53 63 Q60 ${LIFE.s.mood>=1?69:LIFE.s.mood<=-1?59:64} 67 63" fill="none" stroke="#7a3b2e" stroke-width="2" stroke-linecap="round"/>
+      ${W('bone')?`<path d="M36 40 C36 22 84 22 84 40 Z" fill="#c9302c"/><path d="M80 38 C92 38 98 41 98 43 L80 43Z" fill="#a32522"/><circle cx="60" cy="24" r="2" fill="#a32522"/>${LIFE.sps()[0]?`<text x="60" y="37" font-size="10" text-anchor="middle">${LIFE.sps()[0].emo}</text>`:''}`:''}
+      ${W('patek')||W('rolex')||W('relogio')||W('ultra')||W('gshock')?`<g><rect x="8" y="98" width="20" height="9" rx="3" fill="${P}"/><rect x="15" y="95" width="8" height="15" rx="2" fill="${W('patek')||W('rolex')||W('relogio')?'#e9c35a':'#333'}"/><circle cx="19" cy="102.5" r="3" fill="${W('patek')?'#2b4a7a':W('rolex')?'#1c5a3a':'#ddd'}"/></g>`:''}
+      ${W('anel')?'<circle cx="104" cy="104" r="4" fill="none" stroke="#e9c35a" stroke-width="2.4"/>':''}</g>
+      <circle cx="60" cy="60" r="58" fill="none" stroke="${LIFE.s.hof?'#f0c96e':'rgba(255,255,255,.18)'}" stroke-width="${LIFE.s.hof?3:2}"/></svg>`}};
+

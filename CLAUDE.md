@@ -1,12 +1,17 @@
 # Escola de Poker — guia para o Claude
 
 Simulador de carreira e vida de um jogador de poker (Texas Hold'em), em português do Brasil.
-Hoje é um único arquivo: `index.html` (~670 KB, HTML + CSS + JS sem build).
+O código-fonte fica em `src/`; `npm run build` junta tudo num único `index.html` (~670 KB), que é o arquivo publicado.
 Publicado como artifact do claude.ai (slug `14444a5e-58ec-43d9-b1dd-71800b67264c`).
 
 ## Como o código está organizado
 
-Tudo vive dentro do `<script>` de `index.html`, em objetos globais:
+- `src/head.html`, `src/styles.css`, `src/body.html`, `src/tail.html`: partes fixas da página.
+- `src/js/NNN-nome.js`: o script em partes, concatenadas em ordem numérica (é um único escopo global, não são módulos ES).
+- `tools/build.js`: gera `index.html`. **Edite sempre em `src/` e rode o build**; nunca edite `index.html` à mão.
+- Para uma parte nova, crie `src/js/NNN-nome.js` com o número na posição em que ela precisa rodar.
+
+Os objetos globais:
 
 | Objeto | O que faz |
 |---|---|
@@ -29,8 +34,10 @@ Tudo vive dentro do `<script>` de `index.html`, em objetos globais:
 | `OUT`, `AV` | Closet (looks mesa/rolê) e avatar SVG do jogador |
 | `HUD`, `VG`, `HOJE`, `TOAST` | Interface: barra fixa, abas agrupadas, tela Hoje, avisos |
 | `AIX` | Chamadas à IA (`window.claude`), sempre com fallback sem IA |
+| `FACE` | Avatares ilustrados em SVG (bots, família, lendas, par, perfis, jogador) com expressões: feliz, neutro, triste, tilt, cansado, confiante |
+| `CHIPFX` | Fichas voando na mesa (apostas pro pote, pote pro vencedor) |
 
-A pasta `modules/` tem as fontes dos módulos mais novos **como referência** (já estão embutidos no `index.html`).
+A pasta `modules/` é histórica (fontes avulsas de versões antigas); a fonte de verdade é `src/`.
 
 ## Padrões
 
@@ -45,13 +52,13 @@ A pasta `modules/` tem as fontes dos módulos mais novos **como referência** (j
 ```
 npm install
 npx playwright install chromium
-npm test
+npm test        # roda o build e depois os testes
 ```
 Cada arquivo em `tests/` abre o `index.html` num celular simulado (390×860) e imprime `errors []` quando tudo passa.
 
 ## Próximos passos sugeridos (migração)
 
-1. Separar o `<script>` em módulos ES (`src/*.js`) com um build (Vite) que gere de novo um único `index.html`.
-2. Trocar os wrappers em cadeia por chamadas diretas nos módulos.
-3. Mesa em canvas/PixiJS com animações de fichas e cartas.
-4. PWA (instalável e offline).
+1. ~~Separar o script em partes com build~~ (feito na v57).
+2. Trocar os wrappers em cadeia por chamadas diretas nas partes.
+3. Mesa em canvas/PixiJS (hoje: DOM + CSS + `CHIPFX`).
+4. PWA completo com service worker (hoje só as meta tags de app no iPhone/Android).

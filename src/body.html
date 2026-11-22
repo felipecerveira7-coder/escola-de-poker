@@ -1,0 +1,238 @@
+
+</head>
+<body>
+<div id="title" class="ttl"></div>
+<header>
+  <h1>Escola de Poker <span class="gold">♠♥♦♣</span></h1>
+  <p>Texas Hold'em do zero: regras, ranking de mãos, mãos iniciais, matemática, treino, mesa contra bots e torneio.</p>
+</header>
+<nav><div class="in">
+  <a href="#vida"><span class="ni">🏠</span><span class="nl">Vida</span></a>
+  <a href="#jogar"><span class="ni">♠️</span><span class="nl">Cash</span></a>
+  <a href="#torneio"><span class="ni">🏆</span><span class="nl">Torneio</span></a>
+  <a href="#circuito"><span class="ni">📰</span><span class="nl">Circuito</span></a>
+  <a href="#" class="nmore" data-more><span class="ni">☰</span><span class="nl">Mais</span></a>
+</div></nav>
+<div class="msheet" id="moreSheet"><div class="mbox"><button class="tbtn" data-menu style="margin:0 0 10px">🏠 Menu principal · carreiras</button><div class="mgrp">📚 Aprender</div><div class="mlinks"><a href="#basico">Regras</a><a href="#ranking">Ranking de mãos</a><a href="#iniciais">Mãos iniciais</a><a href="#matematica">Matemática</a><a href="#treino">Treino</a></div><div class="mgrp">📊 Meu jogo</div><div class="mlinks"><a href="#analise">Análise</a><a href="#revisao">Revisão de mãos</a></div><div class="mgrp">👥 Mundo</div><div class="mlinks"><a href="#jogadores">Jogadores</a></div><button class="sm" data-mclose style="margin-top:14px;width:100%">Fechar</button></div></div>
+
+<main>
+<!-- ===================== REGRAS ===================== -->
+<section class="view" id="v-basico">
+  <div class="panel">
+    <h2>O objetivo</h2>
+    <p>Ganhar fichas. Você ganha o pote de duas formas: tendo a <b>melhor mão de 5 cartas</b> no final (showdown) ou fazendo <b>todos os adversários desistirem</b> antes disso.</p>
+    <p>Cada jogador recebe <b>2 cartas fechadas</b> (só suas). Na mesa saem <b>5 cartas comunitárias</b>, que todos usam. Sua mão final é a melhor combinação de 5 cartas entre as 7 disponíveis — você pode usar as duas suas, só uma, ou nenhuma.</p>
+    <div style="text-align:center;margin-top:10px">
+      <div class="muted" style="font-size:13px">Exemplo: suas cartas</div>
+      <span id="ex-hole"></span>
+      <div class="muted" style="font-size:13px;margin-top:8px">+ mesa</div>
+      <span id="ex-board"></span>
+      <div style="margin-top:8px">= <b class="gold">Flush de copas</b> (as 5 destacadas)</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Como uma mão acontece</h2>
+    <ol class="steps">
+      <li><span class="n">1</span><b>Blinds</b>Os dois jogadores à esquerda do botão (dealer) colocam apostas obrigatórias: small blind (SB) e big blind (BB). Isso garante que sempre há algo em disputa.</li>
+      <li><span class="n">2</span><b>Pré-flop</b>Cada um recebe 2 cartas. Primeira rodada de apostas, começando pelo jogador à esquerda do BB.</li>
+      <li><span class="n">3</span><b>Flop</b>Saem 3 cartas comunitárias. Nova rodada de apostas, começando pelo primeiro jogador ativo à esquerda do botão.</li>
+      <li><span class="n">4</span><b>Turn</b>Sai a 4ª carta comunitária. Nova rodada de apostas.</li>
+      <li><span class="n">5</span><b>River</b>Sai a 5ª e última carta. Última rodada de apostas.</li>
+      <li><span class="n">6</span><b>Showdown</b>Quem sobrou mostra as cartas. Melhor mão de 5 leva o pote. Empate exato divide.</li>
+    </ol>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h2>Suas ações</h2>
+      <table>
+        <tr><th>Ação</th><th>Quando / o que é</th></tr>
+        <tr><td><b>Check</b> (passar)</td><td>Ninguém apostou ainda na rodada: você continua sem colocar fichas.</td></tr>
+        <tr><td><b>Bet</b> (apostar)</td><td>Ninguém apostou: você coloca a primeira aposta da rodada.</td></tr>
+        <tr><td><b>Call</b> (pagar)</td><td>Alguém apostou: você iguala o valor.</td></tr>
+        <tr><td><b>Raise</b> (aumentar)</td><td>Alguém apostou: você iguala e aumenta. Mínimo = o tamanho do último aumento.</td></tr>
+        <tr><td><b>Fold</b> (desistir)</td><td>Você larga as cartas e perde o que já colocou no pote.</td></tr>
+        <tr><td><b>All-in</b></td><td>Você aposta todas as suas fichas.</td></tr>
+      </table>
+    </div>
+    <div class="panel">
+      <h2>Posições (mesa de 6)</h2>
+      <svg class="table-svg" viewBox="0 0 600 340" id="tablesvg" aria-label="Mesa com posições"></svg>
+      <p style="font-size:14px"><b class="gold">Pré-flop</b> age primeiro: UTG → MP → CO → BTN → SB → BB.<br>
+      <b class="gold">Depois do flop</b>: SB → BB → UTG → MP → CO → BTN.</p>
+      <p class="muted" style="font-size:14px">O botão (BTN) age por último em todas as rodadas pós-flop: vê o que todos fizeram antes de decidir. Por isso a posição tardia permite jogar mais mãos.</p>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h2>Regras que confundem iniciantes</h2>
+      <div class="tip"><b>Naipe não desempata.</b> Flush de copas e flush de espadas com as mesmas cartas = empate.</div>
+      <div class="tip"><b>Kicker.</b> Mesa A♠ 9♥ 6♣ 4♦ 2♠: quem tem A♦K♣ fica com A-A-K-9-6 e vence quem tem A♥Q♣ (A-A-Q-9-6). A carta lateral desempata.</div>
+      <div class="tip"><b>A mesa pode ser a mão.</b> Se as 5 cartas comunitárias formam a melhor mão de todos, o pote é dividido.</div>
+      <div class="tip"><b>Ás é alto ou baixo</b> na sequência: A-2-3-4-5 (a "roda") e 10-J-Q-K-A valem; Q-K-A-2-3 não.</div>
+    </div>
+    <div class="panel">
+      <h2>Glossário rápido</h2>
+      <dl class="gl">
+        <dt>Pote</dt><dd>Total de fichas em disputa.</dd>
+        <dt>Board</dt><dd>As cartas comunitárias.</dd>
+        <dt>Pocket pair</dt><dd>Par nas suas 2 cartas (ex.: 8-8).</dd>
+        <dt>Suited (s)</dt><dd>Suas 2 cartas do mesmo naipe. "o" = offsuit.</dd>
+        <dt>Set</dt><dd>Trinca feita com pocket pair + 1 carta da mesa.</dd>
+        <dt>Draw</dt><dd>Mão incompleta que precisa de carta (ex.: 4 cartas de flush).</dd>
+        <dt>Outs</dt><dd>Cartas que ainda saem e completam sua mão.</dd>
+        <dt>C-bet</dt><dd>Aposta no flop de quem aumentou pré-flop.</dd>
+        <dt>Limp</dt><dd>Só pagar o big blind pré-flop (geralmente fraco).</dd>
+        <dt>Tilt</dt><dd>Jogar mal por estar irritado depois de perder.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>5 princípios para começar ganhando</h2>
+    <ol>
+      <li><b>Jogue poucas mãos, mas jogue-as agressivamente</b> (tight-aggressive). Entre no pote aumentando, não só pagando.</li>
+      <li><b>Posição vale ouro.</b> Abra mais mãos no CO e no BTN; seja seletivo nas primeiras posições.</li>
+      <li><b>Não pague por curiosidade.</b> Se a matemática (aba 4) não justifica, desista.</li>
+      <li><b>Par alto não é mão invencível.</b> Num board com 4 cartas do mesmo naipe ou muito conectado, desacelere.</li>
+      <li><b>Gerencie a banca.</b> Jogue com dinheiro que pode perder; em cash game, tenha ao menos 20–30 buy-ins do nível.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===================== RANKING ===================== -->
+<section class="view" id="v-ranking">
+  <div class="panel">
+    <h2>Ranking das mãos (da mais forte para a mais fraca)</h2>
+    <p class="muted">A probabilidade é a chance de terminar com essa mão usando 7 cartas (2 suas + 5 da mesa), sem desistir.</p>
+    <div id="ranklist"></div>
+  </div>
+  <div class="panel">
+    <h3>Para fixar</h3>
+    <p>As dúvidas mais comuns: <b class="gold">Flush vence sequência</b> · <b class="gold">Full house vence flush</b> · <b class="gold">Trinca vence dois pares</b>. Quanto mais rara a mão, mais forte ela é.</p>
+    <p>Vá à aba <a href="#treino" style="color:var(--gold2)">Treino</a> para praticar até identificar mãos sem pensar.</p>
+  </div>
+</section>
+
+<!-- ===================== MÃOS INICIAIS ===================== -->
+<section class="view" id="v-iniciais">
+  <div class="panel">
+    <h2>Quais mãos jogar pré-flop</h2>
+    <p class="muted">Guia simplificado para mesa de 6 a 9 jogadores, sem ninguém ter aumentado antes de você. Acima da diagonal: mesmo naipe (s). Abaixo: naipes diferentes (o). Diagonal: pares. Clique numa mão.</p>
+    <div class="grid2" style="align-items:start">
+      <div><div class="hg" id="hgrid"></div></div>
+      <div>
+        <div class="legend" id="legend"></div>
+        <div class="handinfo" id="hinfo"><span class="muted">Clique em uma mão da grade para ver a recomendação.</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>Quadro por posição</h2>
+    <p class="muted">Quais mãos abrir (aumentar) em cada posição numa mesa de 8, quando ninguém aumentou antes de você. Toque numa posição.</p>
+    <div id="posBoard"></div>
+  </div>
+  <div class="panel">
+    <h3>Por que mesmo naipe e conectadas valem mais?</h3>
+    <p>Cartas do mesmo naipe fazem flush e cartas próximas (ex.: 8-7) fazem sequência — mãos fortes que ganham potes grandes. Mas a diferença é menor do que parece: AKs ganha só ~2–3% a mais que AKo. Não jogue uma mão ruim só porque é "suited".</p>
+    <p>Se alguém já aumentou antes de você, aperte o critério: com faixas 3 e 4, em geral desista; com faixas 1 e 2, re-aumente (3-bet) ou pague.</p>
+  </div>
+</section>
+
+<!-- ===================== MATEMÁTICA ===================== -->
+<section class="view" id="v-matematica">
+  <div class="panel">
+    <h2>Outs e a regra do 2 e 4</h2>
+    <p><b>Outs</b> são as cartas que ainda podem sair e completar sua mão. Exemplo: você tem 4 cartas de copas depois do flop; restam 13 − 4 = <b>9 copas</b> no baralho → 9 outs.</p>
+    <div class="tip"><b>Regra do 4:</b> no flop, com as duas cartas ainda por vir (turn + river): outs × 4 ≈ % de acertar.<br><b>Regra do 2:</b> no turn, com uma carta por vir: outs × 2 ≈ %.</div>
+    <table style="margin-top:12px">
+      <tr><th>Situação</th><th>Outs</th><th>Flop → river</th><th>Só a próxima carta</th></tr>
+      <tbody id="outsTable"></tbody>
+    </table>
+    <p class="muted" style="font-size:13px;margin-top:10px">"Flop → river" assume que você verá as duas cartas (ex.: está all-in). Se ainda houver aposta no turn, use a coluna "só a próxima carta".</p>
+  </div>
+
+  <div class="panel">
+    <h2>Pot odds: vale a pena pagar?</h2>
+    <p>Compare a <b>chance de completar sua mão</b> com o <b>preço da aposta</b>. Se a chance for maior que o preço, pagar dá lucro no longo prazo.</p>
+    <div class="calc">
+      <div><label>Seus outs</label><input type="number" id="cOuts" value="9" min="1" max="20"></div>
+      <div><label>Momento</label><select id="cStreet"><option value="flop">No flop (2 cartas por vir)</option><option value="flop1">No flop (só o turn)</option><option value="turn">No turn (1 carta por vir)</option></select></div>
+      <div><label>Pote (já com a aposta dele)</label><input type="number" id="cPot" value="150" min="0"></div>
+      <div><label>Quanto você precisa pagar</label><input type="number" id="cCall" value="50" min="0"></div>
+    </div>
+    <div class="out">
+      <div class="stat"><div class="k">Sua chance de acertar</div><div class="v" id="oEq">–</div></div>
+      <div class="stat"><div class="k">Chance mínima necessária</div><div class="v" id="oNeed">–</div></div>
+      <div class="stat"><div class="k">Pot odds</div><div class="v" id="oOdds">–</div></div>
+    </div>
+    <div class="verdict" id="oVerdict"></div>
+    <p class="muted" style="font-size:13px;margin-top:12px">Fórmula: chance necessária = valor a pagar ÷ (pote + valor a pagar). Exemplo padrão acima: 50 ÷ (150 + 50) = 25%.</p>
+  </div>
+
+  <div class="panel">
+    <h3>Odds implícitas e armadilhas</h3>
+    <p><b>Odds implícitas:</b> se você acertar, provavelmente ganha mais fichas nas rodadas seguintes. Isso justifica pagar um pouco abaixo da conta — principalmente com draws "escondidos" e adversário com muitas fichas.</p>
+    <p><b>Outs sujos:</b> nem todo out é limpo. Se você tem flush draw baixo e o board tem par, completar o flush pode perder para um full house. Desconte outs duvidosos.</p>
+  </div>
+</section>
+
+<!-- ===================== TREINO ===================== -->
+<section class="view" id="v-treino">
+  <div class="modes">
+    <button id="mWho" class="on">Quem vence?</button>
+    <button id="mWhat">Qual é a sua mão?</button>
+    <button id="mOuts">Conte os outs</button>
+  </div>
+  <div class="score" id="score"></div>
+  <div class="panel" style="padding:18px">
+    <div id="trainer"></div>
+  </div>
+  <p class="muted" style="font-size:13px;text-align:center">As mãos são sorteadas e avaliadas pelas regras oficiais. As 5 cartas que formam a mão vencedora ficam destacadas.</p>
+</section>
+<!-- ===================== JOGAR ===================== -->
+<section class="view" id="v-jogar">
+  <div id="cashRoot"></div>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Como os bots pensam</h3>
+      <div class="tip"><b>Faixas por posição.</b> Abrem uma % de mãos que depende de quantos jogadores ainda falam depois (≈10% em UTG numa mesa cheia, ≈45% no botão).</div>
+      <div class="tip"><b>Leitura de faixas.</b> Estimam a faixa de cada adversário pelas ações (abriu, pagou, deu 3-bet, apostou no flop…) e calculam a chance de vencer contra essa faixa, não contra mãos aleatórias.</div>
+      <div class="tip"><b>Jogo pós-flop.</b> Apostam por valor, fazem continuation bet, semi-blefe com projetos, blefam no river quando o adversário mostra fraqueza e pagam pelas pot odds (com odds implícitas).</div>
+      <div class="tip"><b>Stack curto.</b> Abaixo de ~13 BB jogam all-in ou desistem, com faixas próximas das de equilíbrio.</div>
+      <div class="tip"><b>Adaptação.</b> Acompanham seu VPIP, PFR e agressividade (ligue o HUD para ver). Se você joga muitas mãos, eles pagam mais leve; se você desiste muito, blefam mais.</div>
+    </div>
+    <div class="panel">
+      <h3>Os 5 estilos de bot</h3>
+      <p class="muted" style="margin-top:0">Sorteados a cada partida (com mais de 5 bots, alguns estilos se repetem). Tente descobrir quem é quem; confira com "Ver estilo".</p>
+      <div class="stylelist"></div>
+    </div>
+  </div>
+  <div class="panel"><h3>HUD: as estatísticas</h3>
+    <p style="margin:0"><b>VPIP</b>: % de mãos em que o jogador colocou fichas por vontade própria pré-flop. <b>PFR</b>: % em que aumentou pré-flop. <b>AF</b>: apostas e aumentos ÷ calls depois do flop. Jogador sólido: VPIP 18–25, PFR 14–20, AF 2–3. VPIP alto e PFR baixo = paga demais (estação).</p></div>
+</section>
+
+<!-- ===================== TORNEIO ===================== -->
+<section class="view" id="v-torneio">
+  <div id="tourRoot"></div>
+  <div class="panel">
+    <h3>Estratégia de torneio em 5 pontos</h3>
+    <ol style="margin:0">
+      <li><b>Início (stack fundo):</b> jogue apertado, como no cash game. Não arrisque o torneio com mãos marginais.</li>
+      <li><b>Blinds subindo:</b> roube mais blinds do cutoff e do botão. Com antes, cada pote já vale mais.</li>
+      <li><b>Pense em BB e em M:</b> seu stack só importa em relação aos blinds. Abaixo de 10–13 BB, all-in ou desistir.</li>
+      <li><b>Pagar all-in exige mais</b> do que dar all-in: quem empurra tem duas formas de ganhar (todos desistem ou ele vence a mão).</li>
+      <li><b>Stack grande é arma:</b> pressione os stacks médios, que não querem ser eliminados.</li>
+    </ol>
+  </div>
+</section>
+<!-- ===================== ANÁLISE ===================== -->
+<section class="view" id="v-analise"><div id="anaRoot"></div></section>
+<section class="view" id="v-revisao"><div id="revRoot"></div></section>
+<section class="view" id="v-jogadores"><div id="livRoot"></div></section>
+<section class="view" id="v-circuito"><div id="cirRoot"></div></section>
+<section class="view" id="v-vida"><div id="vidaRoot"></div></section>
+</main>
+
