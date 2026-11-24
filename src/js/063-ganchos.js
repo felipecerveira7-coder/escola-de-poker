@@ -5,9 +5,9 @@
   const _c=FAM.call;FAM.call=function(id){const tc=CLK.can(.5,'uma ligação');if(tc)return tc;const r=_c.call(this,id);if(/^📞/.test(r)){CLK.add(.5);LIFE.commit();const p=this.get(id);if(p&&Math.random()<.45)return r+' '+GIFT.hint(p)}return r};
   const _o=LIFE.out;LIFE.out=function(n){const tc=CLK.can(3,'sair com os amigos');if(tc)return tc;const r=_o.call(this,n);if(r&&/\(−R\$/.test(r)){CLK.add(3);this.commit()}return r};
   const _p=LIFE.post;LIFE.post=function(id){const r=_p.call(this,id);if(r){CLK.add(.25);this.commit()}return r};
-  const _os=LIFE.onStart;LIFE.onStart=function(kind,mtt){_os.call(this,kind,mtt);try{if(!this.s||!CAL.on())return;if(kind==='tour')CLK.to(14);this.commit()}catch(e){}};
+  const _os=LIFE.onStart;LIFE.onStart=function(kind,mtt){_os.call(this,kind,mtt);try{if(!this.s||!CAL.on())return;if(kind==='tour'){const ev=TOUR.g&&TOUR.g.ev;CLK.to(ev?tStartH(ev):19)}this.commit()}catch(e){}};
   const _ot=LIFE.onTour;LIFE.onTour=function(o){_ot.call(this,o);try{if(!this.s||!CAL.on())return;const of=Math.max(1,o.of||9);CLK.add((o.mtt?3:1.5)+(o.mtt?8:3)*(1-(o.place-1)/of));this.commit()}catch(e){}};
-  const _sa=SOC.act;SOC.act=function(k){const t=CAL.today(),u=!!CAL.st().used[t],r=_sa.call(this,k);try{if(!u&&CAL.st().used[t]){CLK.to(20);LIFE.commit()}}catch(e){}return r};
+  
 }catch(e){console.warn('hooks',e)}})();
 
 (function(){try{

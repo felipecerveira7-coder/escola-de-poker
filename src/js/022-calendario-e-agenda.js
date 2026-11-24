@@ -26,7 +26,7 @@ const CAL={
     const w=this.dow(d);['noite','turbo','sabado','domingo'].forEach(id=>{if(EVTS[id].dows.includes(w))out.push({id,key:id+'@'+d,first:d,part:0,E:EVTS[id]})});return out},
   regOpen(ev){const t=this.today();return t>=ev.first-ev.E.reg&&t<=ev.first},
   items(d){return this.st().items.filter(x=>x.day===d&&x.status==='pending')},
-  busy(d){const A=this.st();if(A.used[d])return true;if(this.items(d).length)return true;return this.events(d).some(e=>A.reg[e.key]&&!A.done[e.key])},
+  busy(d){const A=this.st();if(A.used[d]==='ferias')return true;if(this.items(d).length)return true;return this.events(d).some(e=>A.reg[e.key]&&!A.done[e.key])},
   free(from,to){for(let d=from;d<=(to||from+10);d++)if(!this.busy(d))return d;return null},
   add(it){const A=this.st();it.id=A.seq++;it.status='pending';A.items.push(it);if(A.items.length>120)A.items=A.items.filter(x=>x.status==='pending'||x.day>=this.today()-7);return it},
   /* inscrição e torneio */
@@ -41,7 +41,7 @@ const CAL={
   byKey(key){const[id,f]=key.split('@'),d=+f;return this.events(d).find(e=>e.key===key)||null},
   play(key){const A=this.st(),ev=this.byKey(key),t=this.today();if(!ev)return'Evento não encontrado.';
     const part=t-ev.first;if(part<0||part>=(ev.E.days||1))return'Não é o dia desse torneio.';
-    if(A.used[t]&&A.used[t]!==key)return'Você já usou o dia de hoje com outra coisa. Avance o calendário.';
+    {const lt=tLate(ev);if(lt)return lt}
     if(!A.reg[key]){if(!this.regOpen(ev))return'Inscrições fechadas.';const m=this.register(key);if(!A.reg[key])return m}
     if(A.done[key])return'Você já jogou esse torneio.';
     if(part>0){if(TOUR.g&&TOUR.g.ev&&TOUR.g.ev.key===key){A.used[t]=key;TOUR.g.ev.idx=part;TOUR.g.paused=false;location.hash='#torneio';TOUR.log(`<div class="lh lvl">☀️ Dia ${part+1} do ${ev.E.nm}. Fichas desensacadas: ${nf(TOUR.g.players[0].stack)}.</div>`);TOUR.save();TOUR.startHand();return''}
@@ -49,7 +49,7 @@ const CAL={
       return'Você não está mais nesse torneio.'}
     if(TOUR.g&&!TOUR.g.finished&&!(TOUR.g.players[0]&&TOUR.g.players[0].out))return'Termine o torneio em andamento primeiro.';
     if(SAVES.data.tour&&!(TOUR.g&&TOUR.g.finished))SAVES.del('tour');
-    A.used[t]=key;LIFE.commit();location.hash='#torneio';TOUR.startEvent(ev,A.reg[key]);return''},
+    A.used[t]=key;dayDid(t,key);CLK.to(tStartH(ev));LIFE.commit();location.hash='#torneio';TOUR.startEvent(ev,A.reg[key]);return''},
   finish(key,res){const A=this.st();A.done[key]=res;LIFE.commit()},
   /* passagem do tempo */
   blockers(){try{return this._blk()}catch(e){return''}},
@@ -77,7 +77,7 @@ const CAL={
     this.genLife(d);this.genSponsor(d);FAM.daily(d)},
   /* compromissos: o que acontece quando você faz ou falta */
   doItem(id){const A=this.st(),it=A.items.find(x=>x.id===id),t=this.today();if(!it||it.status!=='pending'||it.day!==t)return'';
-    if(A.used[t])return'Você já usou o dia de hoje. Só dá pra fazer uma coisa por dia.';
+    const h0=CLK.now();{const tc=CLK.can(ITEMH(it),it.title);if(tc)return tc}
     let msg='';const R=it.ref||{};
     if(it.kind==='hg'){const e=HG.start(R);if(e)return e}
     if(it.kind==='hgv'){const e=HG.start(R);if(e)return e}
@@ -85,7 +85,7 @@ const CAL={
     if(it.kind==='lesson'){SCOUT.lessonRun().then(m=>{LIFE.flash=m;if(location.hash==='#vida')renderLife()});msg='📘 Aula em andamento…'}
     if(it.kind==='mkt'){const sp=LIFE.spById((it.ref||{}).sp)||LIFE.s.sp;LIFE.addFame(1);if(sp){sp.done.post=(sp.done.post||0)+1;sp.mkt=(sp.mkt||0)+1}msg=`📸 ${it.title}: fotos feitas, marca feliz. Conta como post do contrato.`}
     if(it.kind==='fam'||it.kind==='love'||it.kind==='life'){msg=FAM.doItem(it)}
-    it.status='done';A.used[t]='item'+id;LIFE.commit();LIVES.commit();return msg},
+    it.status='done';dayDid(t,'item'+id);if(CLK.now()===h0&&!['hg','hgv'].includes(it.kind))CLK.add(ITEMH(it));LIFE.commit();LIVES.commit();return msg},
   miss(it){const R=it.ref||{};
     if(it.kind==='meet')LIFE.note(SCOUTS[R.k].emo,`Você faltou à reunião com ${SCOUTS[R.k].nm}`,'A proposta foi embora junto.');
     if(it.kind==='mkt'){const sp=LIFE.spById((it.ref||{}).sp)||LIFE.s.sp;LIFE.addFame(-1);if(sp){sp.miss=(sp.miss||0)+1;if(sp.miss>=2){LIFE.dropSp(sp.id);LIFE.relSp(sp.id);LIFE.note(sp.emo,`${sp.nm} encerrou o contrato`,'Duas ações de marketing perdidas.')}else LIFE.note(sp.emo,`Você faltou à ação da ${sp.nm}`,'Mais uma falta e o contrato cai.')}}

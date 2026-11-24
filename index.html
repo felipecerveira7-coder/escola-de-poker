@@ -2922,14 +2922,14 @@ function bindHG(el,say){const hg=HG.st(),q=a=>el.querySelector(`[data-r="${a}"]`
     if(CAL.on()){const d=+(q('hgDay')||{}).value;if(!d){say('Sem dia livre na próxima semana.');return}
       if(d!==CAL.today()){CAL.add({kind:'hg',day:d,emo:'🍻',title:`Home game na sua casa (R$ ${STAKES[R.stake].sb}/${STAKES[R.stake].bb})`,desc:`Convidados: ${R.guests.join(', ')}. Se cancelar, eles ficam chateados.`,ref:R});
         R.guests.forEach(n=>LIFE.text(n,`Combinado: ${CAL.fmt(d)} lá em casa.`));hg.guests=[];hg.asked={};LIFE.commit();say(`Home game marcado para ${CAL.fmt(d,true)}.`);return}
-      CAL.st().used[d]='hg'}
+      dayDid(d,'hg')}
     const e=HG.start(R);if(e)say(e);else{hg.guests=[];hg.asked={};LIFE.commit()}};
   el.querySelectorAll('[data-hgi]').forEach(b=>b.onclick=()=>{const[a,k]=b.dataset.hgi.split(':'),v=LIFE.s.hgInv[+k];if(!v)return;
     if(a==='no'){LIFE.s.hgInv.splice(+k,1);LIVES.relAdd(v.host,'Você',-.2);LIFE.mine(v.host,'Não vou conseguir ir, foi mal!');LIFE.commit();renderLife();return}
     const R={host:v.host,guests:v.guests,stake:v.stake,rake:v.rake},t=CAL.today();
     if(CAL.on()&&v.day!==t){if(CAL.busy(v.day)){say('Você já tem compromisso nesse dia.');return}CAL.add({kind:'hgv',day:v.day,emo:'🍻',title:`Home game na casa de ${v.host}`,desc:`R$ ${STAKES[v.stake].sb}/${STAKES[v.stake].bb}. Se faltar, ${v.host} fica chateado.`,ref:R});v.acc=true;LIFE.mine(v.host,'Fechado, tô dentro!');LIFE.commit();say('Marcado na agenda.');return}
-    if(CAL.on()&&CAL.st().used[t]){say('Hoje você já usou o dia com outra coisa.');return}
-    const e=HG.start(R);if(e)say(e);else{if(CAL.on())CAL.st().used[t]='hg';LIFE.s.hgInv.splice(+k,1);LIFE.mine(v.host,'Tô chegando!');LIFE.commit()}})}
+    if(CAL.on()&&CLK.now()>22){say(`Já são ${CLK.fmt()}: tarde demais pra um home game hoje.`);return}
+    const e=HG.start(R);if(e)say(e);else{if(CAL.on()){dayDid(t,'hg');CLK.to(20)}LIFE.s.hgInv.splice(+k,1);LIFE.mine(v.host,'Tô chegando!');LIFE.commit()}})}
 
 /* ===================== OLHEIROS ===================== */
 const SCOUTS={
@@ -3047,7 +3047,7 @@ const CAL={
     const w=this.dow(d);['noite','turbo','sabado','domingo'].forEach(id=>{if(EVTS[id].dows.includes(w))out.push({id,key:id+'@'+d,first:d,part:0,E:EVTS[id]})});return out},
   regOpen(ev){const t=this.today();return t>=ev.first-ev.E.reg&&t<=ev.first},
   items(d){return this.st().items.filter(x=>x.day===d&&x.status==='pending')},
-  busy(d){const A=this.st();if(A.used[d])return true;if(this.items(d).length)return true;return this.events(d).some(e=>A.reg[e.key]&&!A.done[e.key])},
+  busy(d){const A=this.st();if(A.used[d]==='ferias')return true;if(this.items(d).length)return true;return this.events(d).some(e=>A.reg[e.key]&&!A.done[e.key])},
   free(from,to){for(let d=from;d<=(to||from+10);d++)if(!this.busy(d))return d;return null},
   add(it){const A=this.st();it.id=A.seq++;it.status='pending';A.items.push(it);if(A.items.length>120)A.items=A.items.filter(x=>x.status==='pending'||x.day>=this.today()-7);return it},
   /* inscrição e torneio */
@@ -3062,7 +3062,7 @@ const CAL={
   byKey(key){const[id,f]=key.split('@'),d=+f;return this.events(d).find(e=>e.key===key)||null},
   play(key){const A=this.st(),ev=this.byKey(key),t=this.today();if(!ev)return'Evento não encontrado.';
     const part=t-ev.first;if(part<0||part>=(ev.E.days||1))return'Não é o dia desse torneio.';
-    if(A.used[t]&&A.used[t]!==key)return'Você já usou o dia de hoje com outra coisa. Avance o calendário.';
+    {const lt=tLate(ev);if(lt)return lt}
     if(!A.reg[key]){if(!this.regOpen(ev))return'Inscrições fechadas.';const m=this.register(key);if(!A.reg[key])return m}
     if(A.done[key])return'Você já jogou esse torneio.';
     if(part>0){if(TOUR.g&&TOUR.g.ev&&TOUR.g.ev.key===key){A.used[t]=key;TOUR.g.ev.idx=part;TOUR.g.paused=false;location.hash='#torneio';TOUR.log(`<div class="lh lvl">☀️ Dia ${part+1} do ${ev.E.nm}. Fichas desensacadas: ${nf(TOUR.g.players[0].stack)}.</div>`);TOUR.save();TOUR.startHand();return''}
@@ -3070,7 +3070,7 @@ const CAL={
       return'Você não está mais nesse torneio.'}
     if(TOUR.g&&!TOUR.g.finished&&!(TOUR.g.players[0]&&TOUR.g.players[0].out))return'Termine o torneio em andamento primeiro.';
     if(SAVES.data.tour&&!(TOUR.g&&TOUR.g.finished))SAVES.del('tour');
-    A.used[t]=key;LIFE.commit();location.hash='#torneio';TOUR.startEvent(ev,A.reg[key]);return''},
+    A.used[t]=key;dayDid(t,key);CLK.to(tStartH(ev));LIFE.commit();location.hash='#torneio';TOUR.startEvent(ev,A.reg[key]);return''},
   finish(key,res){const A=this.st();A.done[key]=res;LIFE.commit()},
   /* passagem do tempo */
   blockers(){try{return this._blk()}catch(e){return''}},
@@ -3098,7 +3098,7 @@ const CAL={
     this.genLife(d);this.genSponsor(d);FAM.daily(d)},
   /* compromissos: o que acontece quando você faz ou falta */
   doItem(id){const A=this.st(),it=A.items.find(x=>x.id===id),t=this.today();if(!it||it.status!=='pending'||it.day!==t)return'';
-    if(A.used[t])return'Você já usou o dia de hoje. Só dá pra fazer uma coisa por dia.';
+    const h0=CLK.now();{const tc=CLK.can(ITEMH(it),it.title);if(tc)return tc}
     let msg='';const R=it.ref||{};
     if(it.kind==='hg'){const e=HG.start(R);if(e)return e}
     if(it.kind==='hgv'){const e=HG.start(R);if(e)return e}
@@ -3106,7 +3106,7 @@ const CAL={
     if(it.kind==='lesson'){SCOUT.lessonRun().then(m=>{LIFE.flash=m;if(location.hash==='#vida')renderLife()});msg='📘 Aula em andamento…'}
     if(it.kind==='mkt'){const sp=LIFE.spById((it.ref||{}).sp)||LIFE.s.sp;LIFE.addFame(1);if(sp){sp.done.post=(sp.done.post||0)+1;sp.mkt=(sp.mkt||0)+1}msg=`📸 ${it.title}: fotos feitas, marca feliz. Conta como post do contrato.`}
     if(it.kind==='fam'||it.kind==='love'||it.kind==='life'){msg=FAM.doItem(it)}
-    it.status='done';A.used[t]='item'+id;LIFE.commit();LIVES.commit();return msg},
+    it.status='done';dayDid(t,'item'+id);if(CLK.now()===h0&&!['hg','hgv'].includes(it.kind))CLK.add(ITEMH(it));LIFE.commit();LIVES.commit();return msg},
   miss(it){const R=it.ref||{};
     if(it.kind==='meet')LIFE.note(SCOUTS[R.k].emo,`Você faltou à reunião com ${SCOUTS[R.k].nm}`,'A proposta foi embora junto.');
     if(it.kind==='mkt'){const sp=LIFE.spById((it.ref||{}).sp)||LIFE.s.sp;LIFE.addFame(-1);if(sp){sp.miss=(sp.miss||0)+1;if(sp.miss>=2){LIFE.dropSp(sp.id);LIFE.relSp(sp.id);LIFE.note(sp.emo,`${sp.nm} encerrou o contrato`,'Duas ações de marketing perdidas.')}else LIFE.note(sp.emo,`Você faltou à ação da ${sp.nm}`,'Mais uma falta e o contrato cai.')}}
@@ -3918,7 +3918,7 @@ const VG={G:[['inicio','🏠','Início',['hoje','casa']],['pessoas','👥','Pess
 /* ----- painel Hoje ----- */
 const HOJE={
   html(){const s=LIFE.s,t=CAL.today(),A=CAL.st(),me=CIRC.me(),L=LIFE.level(),rows=[];const add=(e,x,go,cls)=>rows.push(`<button class="hrow ${cls||''}" data-go="${go}"><span class="he">${e}</span><span class="hx">${x}</span><span class="ha">›</span></button>`);
-    CAL.events(t).forEach(ev=>{const r=A.reg[ev.key],dn=A.done[ev.key];if(dn)return;if(!r&&A.used[t]&&A.used[t]!==ev.key)return;if(r||CAL.regOpen(ev))add(ev.E.emo,`<b>${ev.E.nm}</b> hoje${r?' · você está inscrito':` · inscrição R$ ${brl(ev.E.buy)}`}`,'hash:#torneio',r?'hot':'')});
+    CAL.events(t).forEach(ev=>{const r=A.reg[ev.key],dn=A.done[ev.key];if(dn)return;if(tLate(ev))return;if(r||CAL.regOpen(ev))add(ev.E.emo,`<b>${ev.E.nm}</b> hoje${r?' · você está inscrito':` · inscrição R$ ${brl(ev.E.buy)}`}`,'hash:#torneio',r?'hot':'')});
     CAL.items(t).forEach(it=>add(it.emo||'📌',`<b>${lx(it.title)}</b> hoje`,'hash:#torneio','hot'));
     if(s.dnow&&!s.dnow.over)add('💞',`Você está num encontro com ${lx(s.dnow.nm)}`,'date','hot');
     if(s.press&&!s.press.over)add('🎤','A imprensa está te esperando','press','hot');
@@ -4217,12 +4217,12 @@ const SOC={ngOpen:null,NG:['mkt','gig','meet','lesson','life','fam','love'],
   /* ---------- ações do dia livre ---------- */
   act(k){const[op,arg]=k.split(':'),A=CAL.st(),t=CAL.today(),S=this.st(),s=LIFE.s;
     if(op==='acc')return this.accept(+arg);if(op==='dec')return this.decline(+arg);
-    if(A.used[t])return'Você já usou o dia de hoje. Avance o calendário.';
-    if(op==='rest'){A.used[t]='rest';s.energy=Math.min(100,s.energy+35);this.burnAdd(-25);if(s.mood<0)LIFE.addMood(1);LIFE.commit();return'😴 Dia de folga: celular no silencioso, série e cochilo. Energia +35, desgaste −25.'}
-    if(op==='train'){const P=S.prop;if(!P)return'';A.used[t]='train';P.prog++;s.energy=Math.max(0,s.energy-10);this.burnAdd(-10);LIFE.commit();
+    {const H={rest:4,train:3,live:3,trip:0}[op];if(H){const tc=CLK.can(H,{rest:'descansar',train:'o treino',live:'a live'}[op]);if(tc)return tc}if(op==='live'&&s.energy<12)return'Sem energia pra live (precisa de 12).';if(op==='train'&&s.energy<10)return'Sem energia pra treinar.';if(op==='trip'&&CLK.now()>13)return'Viagem de férias só saindo até as 13h. Amanhã cedo dá.'}
+    if(op==='rest'){dayDid(t,'rest');CLK.add(4);s.energy=Math.min(100,s.energy+30);this.burnAdd(-20);if(s.mood<0)LIFE.addMood(1);LIFE.commit();return'😴 Quatro horas de descanso: celular no silencioso, série e cochilo. Energia +30, desgaste −20. Ainda dá pra sair à noite.'}
+    if(op==='train'){const P=S.prop;if(!P)return'';dayDid(t,'train');CLK.add(3);P.prog++;s.energy=Math.max(0,s.energy-10);this.burnAdd(-10);LIFE.commit();
       return`${P.emo} Treino feito (${P.prog}/${P.need}). ${P.prog>=P.need?'Você está pronto pro desafio.':`Faltam ${P.need-P.prog} até ${CAL.fmt(P.end)}.`}`}
-    if(op==='live'){A.used[t]='live';const v=Math.round(s.fans*.008+S.subs*.35+3),rev=Math.round(v*2.5+S.subs*1.2+v*Math.random()*2),ns=Math.round(1+v*.06*(.5+Math.random()));
-      S.subs+=ns;S.lives++;s.fans+=Math.round(v*.4);LIFE.addFame(.25);s.energy=Math.max(0,s.energy-12);this.burnAdd(4);let m=`🎥 Live de ${4+(Math.random()*4|0)} horas: ${nf(v)} pessoas assistindo, +${ns} inscritos e R$ ${brl(rev)} em doações.`;
+    if(op==='live'){dayDid(t,'live');CLK.add(3);const v=Math.round(s.fans*.008+S.subs*.35+3),rev=Math.round(v*2.5+S.subs*1.2+v*Math.random()*2),ns=Math.round(1+v*.06*(.5+Math.random()));
+      S.subs+=ns;S.lives++;s.fans+=Math.round(v*.4);LIFE.addFame(.25);s.energy=Math.max(0,s.energy-12);this.burnAdd(4);let m=`🎥 Live de 3 horas: ${nf(v)} pessoas assistindo, +${ns} inscritos e R$ ${brl(rev)} em doações.`;
       if(Math.random()<.07){LIFE.addFame(1.5);s.fans+=v*5;m+=' Um corte seu viralizou!'}WALLET.add(rev,'Live: doações e inscritos');this.seen('live');LIFE.commit();return m}
     if(op==='trip'){const b=CAL.blockers();if(b)return b;if(CAL.busy(t+1)||CAL.busy(t+2))return'Pra viajar você precisa de 3 dias seguidos livres (hoje e os próximos 2).';
       const cost=this.r50(1200*(1+LIFE.status()*.25)*(s.love?1.6:1));if(!WALLET.can(cost))return`Saldo insuficiente: a viagem custa R$ ${brl(cost)}.`;
@@ -4255,8 +4255,8 @@ const SOC={ngOpen:null,NG:['mkt','gig','meet','lesson','life','fam','love'],
       h+=`<div class="agrow"><div><span class="agemo">${x.emo}</span> <b>${lx(x.nm)}</b>${x.t==='prop'?` <span class="vtag">R$ ${brl(x.stake)}</span>`:''}<div class="muted" style="font-size:12px">${info}${busy?' · <span class="bad">você já tem algo nesse dia</span>':''}</div></div>
         <div class="agact"><button class="sm pri" data-ag="sx:acc:${x.id}">Aceitar</button> <button class="sm" data-ag="sx:dec:${x.id}">Recusar</button></div></div>`});
     if(S.prop){const P=S.prop;h+=`<div class="agrow"><div><span class="agemo">${P.emo}</span> <b>Aposta com ${lx(P.n)}</b> <span class="vtag">R$ ${brl(P.stake)}</span><div class="muted" style="font-size:12px">${P.nm} · treinos ${P.prog}/${P.need} · decide em ${CAL.fmt(P.end,true)}</div></div></div>`}
-    const free=!A.used[t];
-    h+=`<div class="nsec" style="margin-top:10px">Dia livre</div>${free?`<div class="sxbtns"><button class="sm" data-ag="sx:rest">😴 Descansar</button><button class="sm" data-ag="sx:live">🎥 Fazer live</button>${S.prop?'<button class="sm" data-ag="sx:train">🏋️ Treinar pra aposta</button>':''}<button class="sm" data-ag="sx:trip">🏖️ Férias (3 dias)</button></div>`:'<div class="muted" style="font-size:13px">Hoje já está ocupado.</div>'}
+    const free=CLK.left()>=3;
+    h+=`<div class="nsec" style="margin-top:10px">Dia livre</div>${free?`<div class="sxbtns"><button class="sm" data-ag="sx:rest">😴 Descansar</button><button class="sm" data-ag="sx:live">🎥 Fazer live</button>${S.prop?'<button class="sm" data-ag="sx:train">🏋️ Treinar pra aposta</button>':''}<button class="sm" data-ag="sx:trip">🏖️ Férias (3 dias)</button></div>`:`<div class="muted" style="font-size:13px">Já são ${CLK.fmt()}: não sobra tempo pra isso hoje.</div>`}
       <div class="muted" style="font-size:12px;margin-top:6px">Reputação com marcas: <b>${Math.round(S.rep)}</b> (${this.repTxt()}) · desgaste mental ${Math.round(S.burn)}% · canal com ${nf(S.subs)} inscritos. Quanto mais fama, mais convites: alguns pagam cachê, outros você paga pra estar lá.</div>`;
     return`<div class="panel"><h3>📨 Convites e vida de jogador</h3>${S.inv.length||S.prop?'':'<div class="muted" style="font-size:14px">Nenhum convite no momento.</div>'}${h}</div>`}};
 /* ganchos */
@@ -4271,7 +4271,7 @@ const SOC={ngOpen:null,NG:['mkt','gig','meet','lesson','life','fam','love'],
   const _fin=CAL.finish;CAL.finish=function(key,res){_fin.call(this,key,res);try{SOC.onFinish(key,res)}catch(e){}};
   const _miss=CAL.miss;CAL.miss=function(it){if(it.kind==='gig')return SOC.missGig(it);return _miss.call(this,it)};
   const _do=CAL.doItem;CAL.doItem=function(id){const A=this.st(),it=A.items.find(x=>x.id===id),t=this.today();
-    if(it&&it.kind==='gig'&&it.status==='pending'&&it.day===t){if(A.used[t])return'Você já usou o dia de hoje. Só dá pra fazer uma coisa por dia.';const r=SOC.doGig(it);it.status='done';A.used[t]='item'+id;LIFE.commit();LIVES.commit();return r.msg}
+    if(it&&it.kind==='gig'&&it.status==='pending'&&it.day===t){{const tc=CLK.can(3,it.title);if(tc)return tc}const r=SOC.doGig(it);it.status='done';dayDid(t,'item'+id);CLK.add(3);LIFE.commit();LIVES.commit();return r.msg}
     const m=_do.call(this,id);if(it&&it.status==='done')try{SOC.afterItem(it)}catch(e){}return m};
   const _sd=CAL.startDay;CAL.startDay=function(d){_sd.call(this,d);try{SOC.daily(d)}catch(e){}};
   const _ed=CAL.endDay;CAL.endDay=function(d){_ed.call(this,d);try{const u=this.st().used[d];SOC.burnAdd(!u?-10:/@/.test(u)?2:-2)}catch(e){}};
@@ -4509,25 +4509,25 @@ function bindFam(el,say){el.querySelectorAll('[data-gc]').forEach(b=>b.onclick=(
   const li=el.querySelector('[data-r="loveIn"]');if(li)li.onchange=()=>{LIFE.s.loveIn=li.value;LIFE.commit()}}
 
 function calBar(){if(!CAL.on())return'';const t=CAL.today(),A=CAL.st(),tod=CAL.items(t).length+CAL.events(t).filter(e=>A.reg[e.key]&&!A.done[e.key]).length;
-  return`<div class="calbar"><div><b>📅 ${CAL.fmt(t,true)} · ${CLK.txt()}${HOL.tag(t)}</b><div class="muted" style="font-size:12px">Dia ${t} da carreira${A.used[t]?' · dia já ocupado':tod?` · ${tod} compromisso${tod>1?'s':''} hoje`:' · dia livre'}</div></div>
+  return`<div class="calbar"><div><b>📅 ${CAL.fmt(t,true)} · ${CLK.txt()}${HOL.tag(t)}</b><div class="muted" style="font-size:12px">Dia ${t} da carreira${tod?` · ${tod} compromisso${tod>1?'s':''} hoje`:' · dia livre'}</div></div>
     <div class="calbtns">${CAL.blockers()?`<span class="muted" style="font-size:12px">🔒 ${CAL.blockers()}</span> <button class="sm pri" data-cal="mesa">🃏 Voltar à mesa</button>`:`<button class="sm" data-cal="next1">Avançar dia ▶</button><button class="sm" data-cal="nextev">⏩ Próximo compromisso</button>`}</div></div>`}
 function bindCalBar(el,after){el.querySelectorAll('[data-cal]').forEach(b=>b.onclick=()=>{if(b.dataset.cal==='mesa'){const sc=SAVES.data&&SAVES.data.cash;location.hash=(CASH.g&&CASH.g.home)||(sc&&sc.home&&!TOUR.g&&!(SAVES.data.tour&&SAVES.data.tour.ev))?'#jogar':'#torneio';return}const t=CAL.today(),A=CAL.st(),pend=CAL.items(t).length+CAL.events(t).filter(e=>A.reg[e.key]&&!A.done[e.key]&&!(TOUR.g&&TOUR.g.paused&&TOUR.g.ev&&TOUR.g.ev.key===e.key&&TOUR.g.ev.idx===t-e.first)).length;
-    if(pend&&!A.used[t]&&!b.dataset.ok){b.dataset.ok=1;b.textContent='Você tem compromisso hoje. Faltar?';b.classList.add('pri');return}
+    if(pend&&!b.dataset.ok){b.dataset.ok=1;b.textContent='Você tem compromisso hoje. Faltar?';b.classList.add('pri');return}
     const e=CAL.advance(b.dataset.cal==='next1'?1:14,b.dataset.cal==='nextev');after(e)})}
 
 /* ----- tela da agenda (aba Torneio na carreira) ----- */
 function renderAgenda(){const t=CAL.today(),A=CAL.st();let h=calBar()+MIS.seg();if(MIS.view==='mis')return h+MIS.html();
   const evRow=(ev,d)=>{const r=A.reg[ev.key],dn=A.done[ev.key],E=ev.E,open=CAL.regOpen(ev),isToday=d===t,TO=(()=>{try{return TOUR}catch(e){return null}})(),inProg=!!(TO&&TO.g&&TO.g.ev&&TO.g.ev.key===ev.key);let act='';
     if(dn)act=dn.noshow?'<span class="bad">não foi</span>':`<span class="${dn.prize?'ok':'muted'}">${dn.place}º de ${dn.of}${dn.prize?` · R$ ${brl(dn.prize)}`:''}</span>`;
-    else if(isToday&&!r&&A.used[t]&&A.used[t]!==ev.key)act='<span class="muted">dia já usado</span>';else if(isToday&&(r||open))act=`<button class="sm pri" data-ag="play:${ev.key}">${inProg&&TO.g.paused?`Jogar o Dia ${ev.part+1}`:r?(ev.part?`Jogar o Dia ${ev.part+1}`:'Jogar agora'):`Inscrever e jogar (R$ ${brl(E.buy)})`}</button>${!r&&open?(()=>{const c=SPX.payer(E);return c?` <button class="sm" data-ag="regsp:${ev.key}">🤝 Pela verba ${c.emo}</button>`:''})():''}`;
+    else if(isToday&&!(TO&&TO.g&&TO.g.ev&&TO.g.ev.key===ev.key)&&tLate(ev))act=`<span class="muted">${r?'começou às '+CLK.fmt(tStartH(ev))+', não dá mais':'inscrições encerradas'}</span>`;else if(isToday&&(r||open))act=`<button class="sm pri" data-ag="play:${ev.key}">${inProg&&TO.g.paused?`Jogar o Dia ${ev.part+1}`:r?(ev.part?`Jogar o Dia ${ev.part+1}`:'Jogar agora'):`Inscrever e jogar (R$ ${brl(E.buy)})`}</button>${!r&&open?(()=>{const c=SPX.payer(E);return c?` <button class="sm" data-ag="regsp:${ev.key}">🤝 Pela verba ${c.emo}</button>`:''})():''}`;
     else if(r)act=`<span class="ok">✓ inscrito</span>${d===ev.first&&t<ev.first?` <button class="sm" data-ag="unreg:${ev.key}">cancelar</button>`:''}`;
     else if(ev.part)act='';
     else if(open)act=`<button class="sm" data-ag="reg:${ev.key}">Inscrever · R$ ${brl(E.buy)}</button>${(()=>{const c=SPX.payer(E);return c?` <button class="sm" data-ag="regsp:${ev.key}">🤝 Pela verba ${c.emo}</button>`:''})()}`;
     else if(t<ev.first-E.reg)act=`<span class="muted">inscrições ${CAL.fmt(ev.first-E.reg)}</span>`;else act='<span class="muted">encerrado</span>';
-    return`<div class="agrow"><div><span class="agemo">${E.emo}</span> <b>${E.nm}</b>${E.days?` <span class="vtag">Dia ${ev.part+1}${ev.part===E.days-1?(E.days===3?' · mesa final':' · dia final'):''}</span>`:''}${r&&r.ticket?' <span class="vtag">🎫 pacote</span>':''}${r&&r.sp?` <span class="vtag">🤝 ${r.spNm}${r.cut?` · ${Math.round(r.cut*100)}%`:''}</span>`:''}<div class="muted" style="font-size:12px">${E.fmt==='sng'?'Mesa única':'Multimesas'} · ${E.N} jogadores · buy-in R$ ${brl(E.buy)}${E.travel?` + viagem R$ ${brl(E.travel)}`:''} · ${E.sat?`1º ganha o pacote da etapa (R$ ${brl((()=>{const X=EVTS[(E.target||'etapa@').split('@')[0]]||EVTS.etapa;return X.buy+(X.travel||0)})())})`:`1º leva R$ ${brl(E.abs?E.abs[0]:E.buy*E.N*CIRC.pays(E.N)[0])}${E.minFame&&LIFE.s.fame<E.minFame?` · <span class="bad">fama ${E.minFame} ou satélite</span>`:''}`}${!r&&!dn&&!ev.part&&d>=t?(()=>{const b=SOC.brm(E);return` · <span class="brm ${b[0]}">${b[1]}</span>`})():''}</div></div><div class="agact">${act}</div></div>`};
+    return`<div class="agrow"><div><span class="agemo">${E.emo}</span> <b>${E.nm}</b>${E.days?` <span class="vtag">Dia ${ev.part+1}${ev.part===E.days-1?(E.days===3?' · mesa final':' · dia final'):''}</span>`:''}${r&&r.ticket?' <span class="vtag">🎫 pacote</span>':''}${r&&r.sp?` <span class="vtag">🤝 ${r.spNm}${r.cut?` · ${Math.round(r.cut*100)}%`:''}</span>`:''}<div class="muted" style="font-size:12px">${E.fmt==='sng'?'Mesa única':'Multimesas'} · ${ev.part>0?'retoma':'começa'} às ${CLK.fmt(ev.part>0?13:tStartH(ev))} · ${E.N} jogadores · buy-in R$ ${brl(E.buy)}${E.travel?` + viagem R$ ${brl(E.travel)}`:''} · ${E.sat?`1º ganha o pacote da etapa (R$ ${brl((()=>{const X=EVTS[(E.target||'etapa@').split('@')[0]]||EVTS.etapa;return X.buy+(X.travel||0)})())})`:`1º leva R$ ${brl(E.abs?E.abs[0]:E.buy*E.N*CIRC.pays(E.N)[0])}${E.minFame&&LIFE.s.fame<E.minFame?` · <span class="bad">fama ${E.minFame} ou satélite</span>`:''}`}${!r&&!dn&&!ev.part&&d>=t?(()=>{const b=SOC.brm(E);return` · <span class="brm ${b[0]}">${b[1]}</span>`})():''}</div></div><div class="agact">${act}</div></div>`};
   const itRow=it=>`<div class="agrow"><div><span class="agemo">${it.emo}</span> <b>${lx(it.title)}</b><div class="muted" style="font-size:12px">${lx(it.desc||'')}</div></div><div class="agact">${it.day===t?`<button class="sm pri" data-ag="do:${it.id}">Fazer</button>`:''}${['hg','lesson','fam','love'].includes(it.kind)?` <button class="sm" data-ag="cx:${it.id}">desmarcar</button>`:''}${SOC.NG.includes(it.kind)?` <button class="sm" data-ag="ng:${it.id}">${SOC.ngOpen===it.id?'fechar':'🗣️ negociar'}</button>`:''}</div></div>${SOC.ngOpen===it.id?SOC.negRow(it):''}`;
   const today=CAL.events(t),its=CAL.items(t);
-  h+=`<div class="panel"><h3>Hoje · ${CAL.fmt(t)}</h3>${A.used[t]?'<div class="vsum">✅ Dia ocupado. Você ainda pode jogar cash no clube. Quando quiser, avance o calendário.</div>':''}
+  h+=`<div class="panel"><h3>Hoje · ${CAL.fmt(t)}</h3>
     ${today.map(e=>evRow(e,t)).join('')}${its.map(itRow).join('')}${!today.length&&!its.length?'<div class="muted" style="font-size:14px">Sem torneio nem compromisso hoje. Dia livre: cash no clube, home game, família ou descanso.</div>':''}
     <div class="muted" style="font-size:12px;margin-top:8px">Só dá pra fazer <b>uma</b> coisa por dia (um torneio ou um compromisso). O cash do clube fica aberto todo dia.</div></div>`;
   let up='';for(let d=t+1;d<=t+14;d++){const ev=CAL.events(d),it=CAL.items(d);if(!ev.length&&!it.length)continue;
@@ -5019,9 +5019,9 @@ route();setMode('who');
   const _c=FAM.call;FAM.call=function(id){const tc=CLK.can(.5,'uma ligação');if(tc)return tc;const r=_c.call(this,id);if(/^📞/.test(r)){CLK.add(.5);LIFE.commit();const p=this.get(id);if(p&&Math.random()<.45)return r+' '+GIFT.hint(p)}return r};
   const _o=LIFE.out;LIFE.out=function(n){const tc=CLK.can(3,'sair com os amigos');if(tc)return tc;const r=_o.call(this,n);if(r&&/\(−R\$/.test(r)){CLK.add(3);this.commit()}return r};
   const _p=LIFE.post;LIFE.post=function(id){const r=_p.call(this,id);if(r){CLK.add(.25);this.commit()}return r};
-  const _os=LIFE.onStart;LIFE.onStart=function(kind,mtt){_os.call(this,kind,mtt);try{if(!this.s||!CAL.on())return;if(kind==='tour')CLK.to(14);this.commit()}catch(e){}};
+  const _os=LIFE.onStart;LIFE.onStart=function(kind,mtt){_os.call(this,kind,mtt);try{if(!this.s||!CAL.on())return;if(kind==='tour'){const ev=TOUR.g&&TOUR.g.ev;CLK.to(ev?tStartH(ev):19)}this.commit()}catch(e){}};
   const _ot=LIFE.onTour;LIFE.onTour=function(o){_ot.call(this,o);try{if(!this.s||!CAL.on())return;const of=Math.max(1,o.of||9);CLK.add((o.mtt?3:1.5)+(o.mtt?8:3)*(1-(o.place-1)/of));this.commit()}catch(e){}};
-  const _sa=SOC.act;SOC.act=function(k){const t=CAL.today(),u=!!CAL.st().used[t],r=_sa.call(this,k);try{if(!u&&CAL.st().used[t]){CLK.to(20);LIFE.commit()}}catch(e){}return r};
+  
 }catch(e){console.warn('hooks',e)}})();
 
 (function(){try{
@@ -5547,9 +5547,9 @@ addEventListener('scroll',()=>{if(NAV.cur&&!NAV.busy)NAV.cur.y=window.scrollY},{
 {const _hr=HUD.render;HUD.render=function(){_hr.apply(this,arguments);const el=document.getElementById('hud');if(!el||el.style.display==='none')return;let b=el.querySelector('.hu-bk');
   if(NAV.can()){if(!b){b=document.createElement('button');b.className='hu-bk';b.setAttribute('aria-label','Voltar');b.innerHTML='‹';b.onclick=e=>{e.stopPropagation();NAV.back()};el.prepend(b)}}else if(b)b.remove()}}
 /* inscrição: se o dia de hoje já foi usado com outra coisa, não dá pra se inscrever no torneio de hoje */
-function dayTaken(ev){const A=CAL.st(),t=CAL.today();return!!(ev&&ev.first===t&&A.used[t]&&A.used[t]!==ev.key)}
-{const _rg=CAL.register;CAL.register=function(key){const ev=this.byKey(key);if(dayTaken(ev))return`Hoje você já usou o dia (${this.usedTxt()}). Só dá pra fazer uma coisa por dia: o ${ev.E.nm} de hoje fica pra próxima.`;return _rg.apply(this,arguments)}}
-{const _sr=SPX.reg;SPX.reg=function(key){const ev=CAL.byKey(key);if(dayTaken(ev))return`Hoje você já usou o dia. O ${ev.E.nm} de hoje fica pra próxima.`;return _sr.apply(this,arguments)}}
+function dayTaken(ev){return!!(ev&&tLate(ev))}
+{const _rg=CAL.register;CAL.register=function(key){const ev=this.byKey(key);if(dayTaken(ev))return tLate(ev);return _rg.apply(this,arguments)}}
+{const _sr=SPX.reg;SPX.reg=function(key){const ev=CAL.byKey(key);if(dayTaken(ev))return tLate(ev);return _sr.apply(this,arguments)}}
 CAL.usedTxt=function(){const u=this.st().used[this.today()]||'';return u.startsWith('item')?'com um compromisso':u==='rest'?'descansando':u==='live'?'fazendo live':u==='train'?'treinando':u==='hg'?'com o home game':u.includes('@')?'com outro torneio':u==='trip'?'de férias':'com outra coisa'};
 /* fim do dia: inscrito num torneio que não deu pra jogar porque o dia foi usado com outra coisa = inscrição devolvida, sem falta */
 function regRefund(key,why){const A=CAL.st(),r=A.reg[key],ev=CAL.byKey(key);if(!r)return 0;let v=0;
@@ -5557,7 +5557,7 @@ function regRefund(key,why){const A=CAL.st(),r=A.reg[key],ev=CAL.byKey(key);if(!
   if(r.sp){const c=SPX.c(r.sp);if(c&&r.bud)c.bud+=r.bud}
   delete A.reg[key];return v}
 {const _ed=CAL.endDay;CAL.endDay=function(d){const A=this.st();try{this.events(d).forEach(ev=>{const r=A.reg[ev.key];if(!r||A.done[ev.key]||ev.first!==d)return;const inGame=TOUR.g&&TOUR.g.ev&&TOUR.g.ev.key===ev.key,sv=SAVES.data&&SAVES.data.tour;if(inGame||(sv&&sv.ev&&sv.ev.key===ev.key))return;
-    if(A.used[d]&&A.used[d]!==ev.key){const v=regRefund(ev.key,'o dia já estava ocupado');LIFE.note('↩️',`Inscrição devolvida: ${ev.E.nm}`,`Você usou o dia com outra coisa, então não dava pra jogar.${v?` R$ ${brl(v)} voltaram pra carteira.`:''}${r.sp?' A verba voltou pro patrocinador, sem advertência.':''}`)}})}catch(e){console.warn(e)}
+    if(dayBusy(d)&&A.used[d]!==ev.key){const v=regRefund(ev.key,'você ocupou o horário com outra coisa');LIFE.note('↩️',`Inscrição devolvida: ${ev.E.nm}`,`Você estava ocupado no horário do torneio, então ele foi cancelado sem falta.${v?` R$ ${brl(v)} voltaram pra carteira.`:''}${r.sp?' A verba voltou pro patrocinador, sem advertência.':''}`)}})}catch(e){console.warn(e)}
   return _ed.apply(this,arguments)}}
 /* conserta saves antigos: faltas marcadas em dias que já estavam ocupados */
 function fixOldNoShows(){const s=LIFE.s;if(!s||s.fixNS1)return;s.fixNS1=1;const A=CAL.st();let n=0,v=0;
@@ -5566,6 +5566,18 @@ function fixOldNoShows(){const s=LIFE.s;if(!s||s.fixNS1)return;s.fixNS1=1;const 
     if(r.paid){v+=r.paid;WALLET.add(r.paid,`Estorno: falta cobrada por engano (${k.split('@')[0]})`)}delete A.done[k];delete A.reg[k];n++});
   if(n){LIFE.note('↩️','Falta cancelada',`${n} falta${n>1?'s':''} em torneio que não dava pra jogar (o dia já estava ocupado) foi${n>1?'ram':''} retirada${n>1?'s':''}.${v?` R$ ${brl(v)} devolvidos.`:''} Advertências dos patrocinadores por isso também foram retiradas.`)}LIFE.commit()}
 {const _rl=renderLife;renderLife=function(){try{if(LIFE.s&&CAL.on())fixOldNoShows()}catch(e){}return _rl.apply(this,arguments)}}
+/* =============== v62: o dia é medido em horas e energia (acabou o "uma coisa por dia") =============== */
+/* que horas cada torneio começa */
+function tStartH(ev){const id=ev&&ev.id,E=ev&&ev.E||{};if(E.h)return E.h;if(ev&&ev.part>0)return 13;return{noite:21,turbo:20,sabado:16,domingo:14,main:13,etapa:13,sat:20,nac:12,latam:12,mundial:12}[id]||19}
+/* atrasou demais? (devolve o motivo ou '') */
+function tLate(ev){if(!ev||!CAL.on()||!LIFE.s)return'';const t=CAL.today();if(ev.first+(ev.part||0)!==t&&!(t>=ev.first&&t<ev.first+(ev.E.days||1)))return'';
+  const part=t-ev.first,st=part>0?13:tStartH(ev),lim=part>0?22:st+((ev.E.days||1)>1?3:2),n=CLK.now();
+  return n>lim?`O ${ev.E.nm} ${part>0?`retomou às ${CLK.fmt(st)}`:`começou às ${CLK.fmt(st)}`} e a inscrição tardia acabou às ${CLK.fmt(lim)}. Já são ${CLK.fmt(n)}.`:''}
+/* quanto tempo leva cada compromisso */
+function ITEMH(it){return{gig:3,meet:1.5,lesson:2,mkt:2,fam:3,love:3,life:2.5,hg:5,hgv:5}[it&&it.kind]||2}
+/* registra o que você fez no dia (vários por dia) */
+function dayDid(t,what){const A=CAL.st();A.did=A.did||{};(A.did[t]=A.did[t]||[]).push(what);if(!A.used[t])A.used[t]=what}
+function dayBusy(t){const A=CAL.st();return!!((A.did&&A.did[t]&&A.did[t].length)||A.used[t])}
 </script>
 </body>
 </html>

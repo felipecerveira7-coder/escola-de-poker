@@ -72,12 +72,12 @@ function bindHG(el,say){const hg=HG.st(),q=a=>el.querySelector(`[data-r="${a}"]`
     if(CAL.on()){const d=+(q('hgDay')||{}).value;if(!d){say('Sem dia livre na próxima semana.');return}
       if(d!==CAL.today()){CAL.add({kind:'hg',day:d,emo:'🍻',title:`Home game na sua casa (R$ ${STAKES[R.stake].sb}/${STAKES[R.stake].bb})`,desc:`Convidados: ${R.guests.join(', ')}. Se cancelar, eles ficam chateados.`,ref:R});
         R.guests.forEach(n=>LIFE.text(n,`Combinado: ${CAL.fmt(d)} lá em casa.`));hg.guests=[];hg.asked={};LIFE.commit();say(`Home game marcado para ${CAL.fmt(d,true)}.`);return}
-      CAL.st().used[d]='hg'}
+      dayDid(d,'hg')}
     const e=HG.start(R);if(e)say(e);else{hg.guests=[];hg.asked={};LIFE.commit()}};
   el.querySelectorAll('[data-hgi]').forEach(b=>b.onclick=()=>{const[a,k]=b.dataset.hgi.split(':'),v=LIFE.s.hgInv[+k];if(!v)return;
     if(a==='no'){LIFE.s.hgInv.splice(+k,1);LIVES.relAdd(v.host,'Você',-.2);LIFE.mine(v.host,'Não vou conseguir ir, foi mal!');LIFE.commit();renderLife();return}
     const R={host:v.host,guests:v.guests,stake:v.stake,rake:v.rake},t=CAL.today();
     if(CAL.on()&&v.day!==t){if(CAL.busy(v.day)){say('Você já tem compromisso nesse dia.');return}CAL.add({kind:'hgv',day:v.day,emo:'🍻',title:`Home game na casa de ${v.host}`,desc:`R$ ${STAKES[v.stake].sb}/${STAKES[v.stake].bb}. Se faltar, ${v.host} fica chateado.`,ref:R});v.acc=true;LIFE.mine(v.host,'Fechado, tô dentro!');LIFE.commit();say('Marcado na agenda.');return}
-    if(CAL.on()&&CAL.st().used[t]){say('Hoje você já usou o dia com outra coisa.');return}
-    const e=HG.start(R);if(e)say(e);else{if(CAL.on())CAL.st().used[t]='hg';LIFE.s.hgInv.splice(+k,1);LIFE.mine(v.host,'Tô chegando!');LIFE.commit()}})}
+    if(CAL.on()&&CLK.now()>22){say(`Já são ${CLK.fmt()}: tarde demais pra um home game hoje.`);return}
+    const e=HG.start(R);if(e)say(e);else{if(CAL.on()){dayDid(t,'hg');CLK.to(20)}LIFE.s.hgInv.splice(+k,1);LIFE.mine(v.host,'Tô chegando!');LIFE.commit()}})}
 

@@ -81,9 +81,9 @@ function bindFam(el,say){el.querySelectorAll('[data-gc]').forEach(b=>b.onclick=(
   const li=el.querySelector('[data-r="loveIn"]');if(li)li.onchange=()=>{LIFE.s.loveIn=li.value;LIFE.commit()}}
 
 function calBar(){if(!CAL.on())return'';const t=CAL.today(),A=CAL.st(),tod=CAL.items(t).length+CAL.events(t).filter(e=>A.reg[e.key]&&!A.done[e.key]).length;
-  return`<div class="calbar"><div><b>📅 ${CAL.fmt(t,true)} · ${CLK.txt()}${HOL.tag(t)}</b><div class="muted" style="font-size:12px">Dia ${t} da carreira${A.used[t]?' · dia já ocupado':tod?` · ${tod} compromisso${tod>1?'s':''} hoje`:' · dia livre'}</div></div>
+  return`<div class="calbar"><div><b>📅 ${CAL.fmt(t,true)} · ${CLK.txt()}${HOL.tag(t)}</b><div class="muted" style="font-size:12px">Dia ${t} da carreira${tod?` · ${tod} compromisso${tod>1?'s':''} hoje`:' · dia livre'}</div></div>
     <div class="calbtns">${CAL.blockers()?`<span class="muted" style="font-size:12px">🔒 ${CAL.blockers()}</span> <button class="sm pri" data-cal="mesa">🃏 Voltar à mesa</button>`:`<button class="sm" data-cal="next1">Avançar dia ▶</button><button class="sm" data-cal="nextev">⏩ Próximo compromisso</button>`}</div></div>`}
 function bindCalBar(el,after){el.querySelectorAll('[data-cal]').forEach(b=>b.onclick=()=>{if(b.dataset.cal==='mesa'){const sc=SAVES.data&&SAVES.data.cash;location.hash=(CASH.g&&CASH.g.home)||(sc&&sc.home&&!TOUR.g&&!(SAVES.data.tour&&SAVES.data.tour.ev))?'#jogar':'#torneio';return}const t=CAL.today(),A=CAL.st(),pend=CAL.items(t).length+CAL.events(t).filter(e=>A.reg[e.key]&&!A.done[e.key]&&!(TOUR.g&&TOUR.g.paused&&TOUR.g.ev&&TOUR.g.ev.key===e.key&&TOUR.g.ev.idx===t-e.first)).length;
-    if(pend&&!A.used[t]&&!b.dataset.ok){b.dataset.ok=1;b.textContent='Você tem compromisso hoje. Faltar?';b.classList.add('pri');return}
+    if(pend&&!b.dataset.ok){b.dataset.ok=1;b.textContent='Você tem compromisso hoje. Faltar?';b.classList.add('pri');return}
     const e=CAL.advance(b.dataset.cal==='next1'?1:14,b.dataset.cal==='nextev');after(e)})}
 

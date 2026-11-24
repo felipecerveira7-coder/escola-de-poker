@@ -132,12 +132,12 @@ const SOC={ngOpen:null,NG:['mkt','gig','meet','lesson','life','fam','love'],
   /* ---------- ações do dia livre ---------- */
   act(k){const[op,arg]=k.split(':'),A=CAL.st(),t=CAL.today(),S=this.st(),s=LIFE.s;
     if(op==='acc')return this.accept(+arg);if(op==='dec')return this.decline(+arg);
-    if(A.used[t])return'Você já usou o dia de hoje. Avance o calendário.';
-    if(op==='rest'){A.used[t]='rest';s.energy=Math.min(100,s.energy+35);this.burnAdd(-25);if(s.mood<0)LIFE.addMood(1);LIFE.commit();return'😴 Dia de folga: celular no silencioso, série e cochilo. Energia +35, desgaste −25.'}
-    if(op==='train'){const P=S.prop;if(!P)return'';A.used[t]='train';P.prog++;s.energy=Math.max(0,s.energy-10);this.burnAdd(-10);LIFE.commit();
+    {const H={rest:4,train:3,live:3,trip:0}[op];if(H){const tc=CLK.can(H,{rest:'descansar',train:'o treino',live:'a live'}[op]);if(tc)return tc}if(op==='live'&&s.energy<12)return'Sem energia pra live (precisa de 12).';if(op==='train'&&s.energy<10)return'Sem energia pra treinar.';if(op==='trip'&&CLK.now()>13)return'Viagem de férias só saindo até as 13h. Amanhã cedo dá.'}
+    if(op==='rest'){dayDid(t,'rest');CLK.add(4);s.energy=Math.min(100,s.energy+30);this.burnAdd(-20);if(s.mood<0)LIFE.addMood(1);LIFE.commit();return'😴 Quatro horas de descanso: celular no silencioso, série e cochilo. Energia +30, desgaste −20. Ainda dá pra sair à noite.'}
+    if(op==='train'){const P=S.prop;if(!P)return'';dayDid(t,'train');CLK.add(3);P.prog++;s.energy=Math.max(0,s.energy-10);this.burnAdd(-10);LIFE.commit();
       return`${P.emo} Treino feito (${P.prog}/${P.need}). ${P.prog>=P.need?'Você está pronto pro desafio.':`Faltam ${P.need-P.prog} até ${CAL.fmt(P.end)}.`}`}
-    if(op==='live'){A.used[t]='live';const v=Math.round(s.fans*.008+S.subs*.35+3),rev=Math.round(v*2.5+S.subs*1.2+v*Math.random()*2),ns=Math.round(1+v*.06*(.5+Math.random()));
-      S.subs+=ns;S.lives++;s.fans+=Math.round(v*.4);LIFE.addFame(.25);s.energy=Math.max(0,s.energy-12);this.burnAdd(4);let m=`🎥 Live de ${4+(Math.random()*4|0)} horas: ${nf(v)} pessoas assistindo, +${ns} inscritos e R$ ${brl(rev)} em doações.`;
+    if(op==='live'){dayDid(t,'live');CLK.add(3);const v=Math.round(s.fans*.008+S.subs*.35+3),rev=Math.round(v*2.5+S.subs*1.2+v*Math.random()*2),ns=Math.round(1+v*.06*(.5+Math.random()));
+      S.subs+=ns;S.lives++;s.fans+=Math.round(v*.4);LIFE.addFame(.25);s.energy=Math.max(0,s.energy-12);this.burnAdd(4);let m=`🎥 Live de 3 horas: ${nf(v)} pessoas assistindo, +${ns} inscritos e R$ ${brl(rev)} em doações.`;
       if(Math.random()<.07){LIFE.addFame(1.5);s.fans+=v*5;m+=' Um corte seu viralizou!'}WALLET.add(rev,'Live: doações e inscritos');this.seen('live');LIFE.commit();return m}
     if(op==='trip'){const b=CAL.blockers();if(b)return b;if(CAL.busy(t+1)||CAL.busy(t+2))return'Pra viajar você precisa de 3 dias seguidos livres (hoje e os próximos 2).';
       const cost=this.r50(1200*(1+LIFE.status()*.25)*(s.love?1.6:1));if(!WALLET.can(cost))return`Saldo insuficiente: a viagem custa R$ ${brl(cost)}.`;
@@ -170,8 +170,8 @@ const SOC={ngOpen:null,NG:['mkt','gig','meet','lesson','life','fam','love'],
       h+=`<div class="agrow"><div><span class="agemo">${x.emo}</span> <b>${lx(x.nm)}</b>${x.t==='prop'?` <span class="vtag">R$ ${brl(x.stake)}</span>`:''}<div class="muted" style="font-size:12px">${info}${busy?' · <span class="bad">você já tem algo nesse dia</span>':''}</div></div>
         <div class="agact"><button class="sm pri" data-ag="sx:acc:${x.id}">Aceitar</button> <button class="sm" data-ag="sx:dec:${x.id}">Recusar</button></div></div>`});
     if(S.prop){const P=S.prop;h+=`<div class="agrow"><div><span class="agemo">${P.emo}</span> <b>Aposta com ${lx(P.n)}</b> <span class="vtag">R$ ${brl(P.stake)}</span><div class="muted" style="font-size:12px">${P.nm} · treinos ${P.prog}/${P.need} · decide em ${CAL.fmt(P.end,true)}</div></div></div>`}
-    const free=!A.used[t];
-    h+=`<div class="nsec" style="margin-top:10px">Dia livre</div>${free?`<div class="sxbtns"><button class="sm" data-ag="sx:rest">😴 Descansar</button><button class="sm" data-ag="sx:live">🎥 Fazer live</button>${S.prop?'<button class="sm" data-ag="sx:train">🏋️ Treinar pra aposta</button>':''}<button class="sm" data-ag="sx:trip">🏖️ Férias (3 dias)</button></div>`:'<div class="muted" style="font-size:13px">Hoje já está ocupado.</div>'}
+    const free=CLK.left()>=3;
+    h+=`<div class="nsec" style="margin-top:10px">Dia livre</div>${free?`<div class="sxbtns"><button class="sm" data-ag="sx:rest">😴 Descansar</button><button class="sm" data-ag="sx:live">🎥 Fazer live</button>${S.prop?'<button class="sm" data-ag="sx:train">🏋️ Treinar pra aposta</button>':''}<button class="sm" data-ag="sx:trip">🏖️ Férias (3 dias)</button></div>`:`<div class="muted" style="font-size:13px">Já são ${CLK.fmt()}: não sobra tempo pra isso hoje.</div>`}
       <div class="muted" style="font-size:12px;margin-top:6px">Reputação com marcas: <b>${Math.round(S.rep)}</b> (${this.repTxt()}) · desgaste mental ${Math.round(S.burn)}% · canal com ${nf(S.subs)} inscritos. Quanto mais fama, mais convites: alguns pagam cachê, outros você paga pra estar lá.</div>`;
     return`<div class="panel"><h3>📨 Convites e vida de jogador</h3>${S.inv.length||S.prop?'':'<div class="muted" style="font-size:14px">Nenhum convite no momento.</div>'}${h}</div>`}};
 /* ganchos */
@@ -186,7 +186,7 @@ const SOC={ngOpen:null,NG:['mkt','gig','meet','lesson','life','fam','love'],
   const _fin=CAL.finish;CAL.finish=function(key,res){_fin.call(this,key,res);try{SOC.onFinish(key,res)}catch(e){}};
   const _miss=CAL.miss;CAL.miss=function(it){if(it.kind==='gig')return SOC.missGig(it);return _miss.call(this,it)};
   const _do=CAL.doItem;CAL.doItem=function(id){const A=this.st(),it=A.items.find(x=>x.id===id),t=this.today();
-    if(it&&it.kind==='gig'&&it.status==='pending'&&it.day===t){if(A.used[t])return'Você já usou o dia de hoje. Só dá pra fazer uma coisa por dia.';const r=SOC.doGig(it);it.status='done';A.used[t]='item'+id;LIFE.commit();LIVES.commit();return r.msg}
+    if(it&&it.kind==='gig'&&it.status==='pending'&&it.day===t){{const tc=CLK.can(3,it.title);if(tc)return tc}const r=SOC.doGig(it);it.status='done';dayDid(t,'item'+id);CLK.add(3);LIFE.commit();LIVES.commit();return r.msg}
     const m=_do.call(this,id);if(it&&it.status==='done')try{SOC.afterItem(it)}catch(e){}return m};
   const _sd=CAL.startDay;CAL.startDay=function(d){_sd.call(this,d);try{SOC.daily(d)}catch(e){}};
   const _ed=CAL.endDay;CAL.endDay=function(d){_ed.call(this,d);try{const u=this.st().used[d];SOC.burnAdd(!u?-10:/@/.test(u)?2:-2)}catch(e){}};
