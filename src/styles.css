@@ -594,3 +594,23 @@ body.arena-on{overflow:hidden}
 .arena .pseat.me .pcards{position:relative;z-index:4}
 @media (pointer:coarse){.arena .twrap{padding-top:max(env(safe-area-inset-top),56px)}}
 .astrip .dtag{position:static}.astrip .dbub{left:50%}
+/* ===== v63: cenário do encontro ===== */
+.dscene2{flex:0 0 auto;border-radius:12px;overflow:hidden;height:84px;border:1px solid rgba(255,255,255,.08)}
+.dart{display:block;width:100%;height:100%}
+.dbox[data-k="motel"]{background:linear-gradient(180deg,#3a0a2a,#1a0612 70%)}
+.dbox[data-k="cinema"]{background:linear-gradient(180deg,#141428,#08080f 70%)}
+.dbox[data-k="show"],.dbox[data-k="festa"]{background:linear-gradient(180deg,#2a0a4a,#0c0418 70%)}
+.dbox[data-k="viagem"]{background:linear-gradient(180deg,#1f5a7a,#0e2c3c 70%)}
+.dbox[data-k="chique"],.dbox[data-k="jantar"]{background:linear-gradient(180deg,#3a1a14,#140a08 70%)}
+.dbox[data-k="casa"],.dbox[data-k="bar"],.dbox[data-k="lanche"]{background:linear-gradient(180deg,#3a2a18,#16100a 70%)}
+.dpl{border-color:rgba(240,201,110,.45)}
+.dpl.hot{background:linear-gradient(#6a1040,#3a0624);border-color:#ff5ec8;color:#ffd6ef}
+.dn.dfade{text-align:center;font-style:italic;padding:18px 8px;background:#000;color:#cfa8c0;border-radius:10px;animation:dfd 1.6s ease-out}
+@keyframes dfd{from{opacity:0;letter-spacing:4px}to{opacity:1;letter-spacing:normal}}
+.dflk{animation:flk 3s infinite}@keyframes flk{0%,100%{opacity:.85}40%{opacity:.6}45%{opacity:.95}70%{opacity:.7}}
+.dtw{animation:twk 2.2s ease-in-out infinite}
+.dneon{animation:neon 2.6s infinite}
+.dbeam{transform-origin:50% 0;animation:beam 2.4s ease-in-out infinite alternate}.dbeam.d2{animation-delay:-.8s}.dbeam.d3{animation-delay:-1.6s}
+@keyframes beam{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+.dwave{animation:wav 3s ease-in-out infinite alternate}@keyframes wav{to{transform:translateY(3px)}}
+.dball{animation:twk 1.2s infinite}

@@ -1,6 +1,6 @@
 {
   "name": "escola-de-poker",
-  "version": "0.62.3",
+  "version": "0.63.0",
   "private": true,
   "description": "Simulador de carreira e vida de jogador de poker (Texas Hold'em)",
   "scripts": {
