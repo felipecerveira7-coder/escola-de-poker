@@ -54,7 +54,7 @@ const CIRC={
 /* jornal + ranking */
 {const _rl=renderLives;renderLives=function(){_rl();const el=document.getElementById('livRoot');if(el&&!el.querySelector('[data-dls]'))el.insertAdjacentHTML('beforeend','<div data-dls>'+dealersHtml()+'</div>')}}
 function renderCircuit(){const el=document.getElementById('cirRoot');if(!el)return;LIVES.tick(false);const s=LIVES.s,S=CIRC.season(),tab=renderCircuit.tab||'jornal';
-  let h=`<div class="panel"><div class="anahead"><div><h2 style="margin:0">O Feltro</h2><div class="muted" style="font-size:13px">o jornal do circuito · temporada ${RK.label(RK.key(s.day))} · dia ${s.day}</div></div>
+  let h=`<div class="panel"><div class="anahead"><div><h2 style="margin:0">O Feltro</h2><div class="muted" style="font-size:13px">o jornal do circuito · temporada ${RK.label(RK.key(s.day))} · ${DT(s.day)}</div></div>
     <div class="anaf"><button class="sm${tab==='jornal'?' on':''}" data-t="jornal">📰 Jornal</button> <button class="sm${tab==='rank'?' on':''}" data-t="rank">🏅 Ranking</button> <button class="sm${tab==='cart'?' on':''}" data-t="cart">💰 Carteira</button></div></div>
     <div style="margin-top:8px;font-size:13px" class="muted">Seu nome no circuito: <input data-r="meName" value="${CIRC.me().replace(/"/g,'')}" maxlength="24" style="width:130px;padding:3px 6px;border-radius:7px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:inherit"></div></div>`;
   if(tab==='cart'){const W=WALLET.s,g=CASH.g,mesa=g?g.players[0].stack*LIVES.CHIP:((SAVES.data.cash&&SAVES.data.cash.players&&SAVES.data.cash.players[0].stack)||0)*(g?1:LIVES.CHIP);
@@ -70,7 +70,7 @@ function renderCircuit(){const el=document.getElementById('cirRoot');if(!el)retu
     if(!N.length)h+=`<div class="panel"><p style="margin:0">Ainda sem notícias. Elas aparecem conforme o tempo passa na vida dos jogadores (a cada partida nova e a cada 4 horas reais): torneios da comunidade, os seus resultados e os bastidores do circuito.</p></div>`;
     const days=[...new Set(N.map(x=>x.day))].sort((a,b)=>b-a),T=CIRC.table().slice(0,5);
     days.slice(0,8).forEach((d,k)=>{const it=N.filter(x=>x.day===d),tours=it.filter(x=>x.k==='tour'),mainN=tours.find(x=>x.mine)||tours[0]||it.find(x=>x.k==='vida')||it.find(x=>x.k==='rank')||null,rest=it.filter(x=>x!==mainN);
-      h+=`<div class="panel news"><div class="muted" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase">Edição nº ${d}</div>
+      h+=`<div class="panel news"><div class="muted" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase">Edição de ${CAL.on()?CAL.fmt(d):DT(d)}</div>
         ${mainN?`<h3 class="nh">${mainN.title}</h3><p style="margin-top:0">${mainN.body}</p>`:''}
         ${rest.filter(x=>x.k==='tour'||x.k==='rank'||x.k==='vida').map(x=>`<div class="nb"><b>${x.title}</b><br><span style="font-size:14px">${x.body}</span></div>`).join('')}
         ${rest.filter(x=>x.k==='bast').length?`<div class="nsec"${mainN?'':' style="margin-top:4px"'}>Bastidores</div>${rest.filter(x=>x.k==='bast').slice(0,6).map(x=>`<div style="font-size:14px;padding:3px 0">• ${x.body}</div>`).join('')}`:''}

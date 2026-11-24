@@ -17,8 +17,8 @@ const BOTP={
       ${row('Lucro em torneios',`${(res.profit||0)>=0?'+':'−'}R$ ${brl(Math.abs(Math.round(res.profit||0)))}`)}${row('Dinheiro (estimativa do circuito)',this.money(b.bank))}
       <div class="nsec">Como joga</div><div style="font-size:14px">${S?`<b>${S.nm}</b>: ${S.ds}`:'Ninguém sabe ainda.'}</div><div class="muted" style="font-size:13px;margin-top:2px">Temperamento: ${B.trait}.</div>
       ${ami.length||riv.length?`<div class="nsec">No circuito</div>${ami.length?`<div style="font-size:14px">🤝 Amigos: ${ami.map(who).join(', ')}</div>`:''}${riv.length?`<div style="font-size:14px">⚔️ Rivais: ${riv.map(who).join(', ')}</div>`:''}`:''}
-      ${N.length?`<div class="nsec">No jornal</div>${N.map(x=>`<div style="font-size:13px;padding:2px 0">📰 ${x.title?`<b>${x.title}</b> `:''}${x.body?String(x.body).slice(0,140):''} <span class="muted">dia ${x.day}</span></div>`).join('')}`:''}
-      ${(b.diary||[]).length?`<div class="nsec">O que circula sobre ${n}</div>${b.diary.slice(0,4).map(x=>`<div style="font-size:13px;padding:2px 0">• ${x.t} <span class="muted">dia ${x.d}</span></div>`).join('')}`:''}
+      ${N.length?`<div class="nsec">No jornal</div>${N.map(x=>`<div style="font-size:13px;padding:2px 0">📰 ${x.title?`<b>${x.title}</b> `:''}${x.body?String(x.body).slice(0,140):''} <span class="muted">${DT(x.day)}</span></div>`).join('')}`:''}
+      ${(b.diary||[]).length?`<div class="nsec">O que circula sobre ${n}</div>${b.diary.slice(0,4).map(x=>`<div style="font-size:13px;padding:2px 0">• ${x.t} <span class="muted">${DT(x.d)}</span></div>`).join('')}`:''}
       </div>
       <div class="dacts" style="margin-top:8px"><button class="sm pri" data-bp="msg">💬 Mensagem</button>${LIFE.s?`<button class="sm${o?' pri':''}" data-bp="out">🍻 Chamar pra sair</button>`:''}</div>`},
   open(n,o){if(!LIVES.s||!LIVES.s.bots[n]||!LIVES.bio(n))return;let ov=document.getElementById('bpOv');if(!ov){ov=document.createElement('div');ov.id='bpOv';document.body.appendChild(ov)}

@@ -27,3 +27,5 @@ function fixDateClash(){const s=LIFE.s;if(!s||s.fixDC1||!CAL.on())return;s.fixDC
   const ev=CAL.events(t).find(e=>A.reg[e.key]&&!A.done[e.key]&&!e.part&&(e.E.days||1)>1);if(!ev||!(s.lastDate&&s.lastDate.d===t)||CLK.now()<=tStartH(ev))return;
   s.hr=tStartH(ev);LIFE.note('↩️',`Você chega a tempo do ${ev.E.nm}`,`O relógio voltou pras ${CLK.fmt(s.hr)}: o encontro não vai custar o Dia 1. A Agenda está com o botão de jogar.`);LIFE.commit()}
 {const _rl=renderLife;renderLife=function(){try{fixDateClash()}catch(e){}return _rl.apply(this,arguments)}}
+/* data do calendário no lugar de "dia 8": 29/11 */
+function DT(d){try{if(d==null||!LIVES.s||!LIVES.s.calStart)return'';const x=CAL.date(+d);return`${String(x.getDate()).padStart(2,'0')}/${String(x.getMonth()+1).padStart(2,'0')}`}catch(e){return''}}

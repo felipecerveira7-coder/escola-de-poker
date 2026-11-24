@@ -156,7 +156,7 @@ LIVES.load();
 function dealersHtml(){return`<div class="panel"><h3>🃏 Os dealers</h3><p class="muted" style="font-size:13px;margin-top:0">Eles se revezam nas mesas (troca a cada 25 mãos, mais ou menos), anunciam all-ins, potes grandes e subida de blinds, e também conversam. Toque no nome do dealer na mesa para ver quem é.</p>${DEALERS.map(D=>`<div style="padding:7px 0;border-top:1px solid var(--line);font-size:14px"><b>${D.emo} ${D.name}</b>, ${D.age} anos · <span class="muted">${D.tipo}</span><br>${D.story}</div>`).join('')}</div>`}
 function renderLives(){const el=document.getElementById('livRoot');if(!el)return;const s=LIVES.s;
   el.innerHTML=`<div class="panel"><h2>Os jogadores</h2><p class="muted" style="margin:0">Todos os jogadores, inclusive os das outras mesas do torneio multimesas, têm uma vida que continua entre as partidas: dinheiro, contas, família e humor. A cada partida nova (e a cada 4 horas reais) passa um dia na vida deles, e o que acontece muda como jogam. O dinheiro é fictício: torneio custa R$ ${LIVES.BUYIN} e no cash cada ficha vale R$ 1.</p>
-    <p class="muted" style="font-size:13px;margin:8px 0 0">Dia ${s.day} na vida deles.</p></div>
+    <p class="muted" style="font-size:13px;margin:8px 0 0">Hoje é ${DT(s.day)}.</p></div>
     ${(()=>{const card=n=>{const st=LIVES.state(n),b=st.b,B=st.B,mood=b.tilt>=2?'Em tilt':b.mood>=2?'Muito bem':b.mood>=1?'Bem':b.mood<=-2?'Muito mal':b.mood<=-1?'Pra baixo':'Normal';
       return`<div class="panel life"><div class="lh2"><span class="lemo lav">${FACE.bot(n,46)}</span><div><b>${n}</b>, ${B.age} anos<div class="muted" style="font-size:13px">${B.job} · ${B.fam}</div></div></div>
         <div class="lrow"><span>Dinheiro</span><b class="${b.bank<(B.rent||800)?'bad':'ok'}">R$ ${nf(Math.round(b.bank))}</b></div>
@@ -167,7 +167,7 @@ function renderLives(){const el=document.getElementById('livRoot');if(!el)return
         ${b.rel&&Object.keys(b.rel).length?`<div class="lrow"><span>Relações</span><b style="text-align:right">${Object.entries(b.rel).sort((x,y)=>x[1]-y[1]).slice(0,4).map(([o,v])=>`<span class="${v<0?'bad':'ok'}">${v<=-2?'😠':v<0?'😒':'🤝'} ${o}</span>`).join(' · ')}</b></div>`:''}
         <div class="lrow"><span>No poker</span><b>${b.res.tours} torneios · ${b.res.wins} vitórias · saldo ${b.res.profit>=0?'+':''}R$ ${nf(Math.round(b.res.profit))}</b></div>
         ${st.tags.length?st.tags.map(t=>`<div class="tip" style="font-size:14px">${t[1]} ${t[2]}</div>`).join(''):'<div class="tip" style="font-size:14px">🙂 Sem nada pesando: joga o próprio estilo.</div>'}
-        ${b.diary.length?`<details><summary class="muted" style="font-size:13px;margin-top:6px">Diário</summary>${b.diary.map(x=>`<div style="font-size:13px;padding:3px 0"><span class="muted">Dia ${x.d}</span> · ${x.t}</div>`).join('')}</details>`:''}</div>`};
+        ${b.diary.length?`<details><summary class="muted" style="font-size:13px;margin-top:6px">Diário</summary>${b.diary.map(x=>`<div style="font-size:13px;padding:3px 0"><span class="muted">${DT(x.d)}</span> · ${x.t}</div>`).join('')}</details>`:''}</div>`};
       const ex=EXTRAS.filter(n=>LIVES.state(n)).sort((a,b)=>a.localeCompare(b));
       return`<h3 style="margin:16px 4px 8px">Seus adversários frequentes</h3><div class="lives">${Object.keys(BIOS).map(card).join('')}</div>
         <details style="margin-top:16px"><summary class="panel" style="cursor:pointer;margin:0"><b>Outros jogadores do circuito (${ex.length})</b> <span class="muted" style="font-size:13px">· aparecem nos torneios multimesas</span></summary>

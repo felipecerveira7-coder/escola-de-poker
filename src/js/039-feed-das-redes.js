@@ -13,5 +13,5 @@ const FEED={
     const sp=LIFE.sps();if(sp.length&&Math.random()<.2)this.push(sp[0].nm,sp[0].emo,`Orgulho de ter ${me} no nosso time! 🙌`)},
   trend(){const T={};this.st().forEach(x=>{if(x.tag)T[x.tag]=(T[x.tag]||0)+1});return Object.entries(T).sort((a,b)=>b[1]-a[1]).slice(0,4).map(x=>x[0])},
   panel(){const F=this.st().slice(0,12),tr=this.trend();return`<div class="panel"><h3>📰 O que estão falando</h3>${tr.length?`<div style="margin-bottom:6px">${tr.map(t=>`<span class="vtag">🔥 ${lx(t)}</span>`).join(' ')}</div>`:''}
-    ${F.map(x=>`<div class="vpost"><b>${x.emo} ${lx(x.who)}</b> <span class="muted" style="font-size:12px">dia ${x.d}</span><div style="font-size:14px">${lx(x.txt)}</div></div>`).join('')||'<p class="muted" style="margin:0">O feed enche conforme você joga, ganha, compra e aparece.</p>'}</div>`}};
+    ${F.map(x=>`<div class="vpost"><b>${x.emo} ${lx(x.who)}</b> <span class="muted" style="font-size:12px">${DT(x.d)}</span><div style="font-size:14px">${lx(x.txt)}</div></div>`).join('')||'<p class="muted" style="margin:0">O feed enche conforme você joga, ganha, compra e aparece.</p>'}</div>`}};
 
