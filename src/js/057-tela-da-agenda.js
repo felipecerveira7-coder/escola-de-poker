@@ -1,7 +1,7 @@
 /* ----- tela da agenda (aba Torneio na carreira) ----- */
 function renderAgenda(){const t=CAL.today(),A=CAL.st();let h=calBar()+MIS.seg();if(MIS.view==='mis')return h+MIS.html();
   const evRow=(ev,d)=>{const r=A.reg[ev.key],dn=A.done[ev.key],E=ev.E,open=CAL.regOpen(ev),isToday=d===t,TO=(()=>{try{return TOUR}catch(e){return null}})(),inProg=!!(TO&&TO.g&&TO.g.ev&&TO.g.ev.key===ev.key);let act='';
-    if(dn)act=dn.noshow?'<span class="bad">não foi</span>':`<span class="${dn.prize?'ok':'muted'}">${dn.place}º de ${dn.of}${dn.prize?` · R$ ${brl(dn.prize)}`:''}</span>`;
+    if(dn)act=dn.noshow?'<span class="bad">não foi</span>':ev.part>0&&!dn.prize?`<span class="muted">você caiu${dn.bd?` no Dia ${dn.bd}`:''} (${dn.place}º de ${dn.of}) · o torneio segue sem você</span>`:`<span class="${dn.prize?'ok':'muted'}">${dn.place}º de ${dn.of}${dn.prize?` · R$ ${brl(dn.prize)}`:''}</span>`;
     else if(isToday&&!(TO&&TO.g&&TO.g.ev&&TO.g.ev.key===ev.key)&&tLate(ev))act=`<span class="muted">${r?'começou às '+CLK.fmt(tStartH(ev))+', não dá mais':'inscrições encerradas'}</span>`;else if(isToday&&(r||open))act=`<button class="sm pri" data-ag="play:${ev.key}">${inProg&&TO.g.paused?`Jogar o Dia ${ev.part+1}`:r?(ev.part?`Jogar o Dia ${ev.part+1}`:'Jogar agora'):`Inscrever e jogar (R$ ${brl(E.buy)})`}</button>${!r&&open?(()=>{const c=SPX.payer(E);return c?` <button class="sm" data-ag="regsp:${ev.key}">🤝 Pela verba ${c.emo}</button>`:''})():''}`;
     else if(r)act=`<span class="ok">✓ inscrito</span>${d===ev.first&&t<ev.first?` <button class="sm" data-ag="unreg:${ev.key}">cancelar</button>`:''}`;
     else if(ev.part)act='';
@@ -12,7 +12,7 @@ function renderAgenda(){const t=CAL.today(),A=CAL.st();let h=calBar()+MIS.seg();
   const today=CAL.events(t),its=CAL.items(t);
   h+=`<div class="panel"><h3>Hoje · ${CAL.fmt(t)}</h3>
     ${today.map(e=>evRow(e,t)).join('')}${its.map(itRow).join('')}${!today.length&&!its.length?'<div class="muted" style="font-size:14px">Sem torneio nem compromisso hoje. Dia livre: cash no clube, home game, família ou descanso.</div>':''}
-    <div class="muted" style="font-size:12px;margin-top:8px">Só dá pra fazer <b>uma</b> coisa por dia (um torneio ou um compromisso). O cash do clube fica aberto todo dia.</div></div>`;
+    <div class="muted" style="font-size:12px;margin-top:8px">O dia vai das 9h às 2h: cada coisa gasta horas e energia. Torneios têm horário de início; o cash do clube fica aberto até as 2h e o online, a qualquer hora.</div></div>`;
   let up='';for(let d=t+1;d<=t+14;d++){const ev=CAL.events(d),it=CAL.items(d);if(!ev.length&&!it.length)continue;
     up+=`<div class="agday${CAL.dow(d)===0||CAL.dow(d)===6?' we':''}"><div class="agd">${CAL.fmt(d)}${CAL.rel(d)?` · ${CAL.rel(d)}`:''}</div>${ev.map(e=>evRow(e,d)).join('')}${it.map(itRow).join('')}</div>`}
   h+=bigPanel();h+=SOC.panel();

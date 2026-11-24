@@ -29,3 +29,13 @@ function fixDateClash(){const s=LIFE.s;if(!s||s.fixDC1||!CAL.on())return;s.fixDC
 {const _rl=renderLife;renderLife=function(){try{fixDateClash()}catch(e){}return _rl.apply(this,arguments)}}
 /* data do calendário no lugar de "dia 8": 29/11 */
 function DT(d){try{if(d==null||!LIVES.s||!LIVES.s.calStart)return'';const x=CAL.date(+d);return`${String(x.getDate()).padStart(2,'0')}/${String(x.getMonth()+1).padStart(2,'0')}`}catch(e){return''}}
+/* torneio de vários dias: se você cai antes do fim, o resultado final só sai no último dia (sem spoiler) */
+{const _ar=CIRC.article;CIRC.article=function(o){try{const k=TOUR.g&&TOUR.g.ev&&TOUR.g.ev.key,ev=k&&CAL.byKey(k),last=ev?ev.first+(ev.E.days||1)-1:0,t=CAL.today();
+    if(ev&&(ev.E.days||1)>1&&t<last){const Q=LIVES.s.newsQ=LIVES.s.newsQ||[];Q.push({d:last,o:JSON.parse(JSON.stringify(o))});
+      const me=(o.res||[]).find(x=>x.name==='Você'),left=Math.max(9,Math.round(o.of*(t-ev.first+1===1?.4:.2)));
+      this.post({k:'vida',title:`${ev.E.nm}: fim do Dia ${t-ev.first+1}`,body:`${me?`${this.me()} caiu em ${me.place}º. `:''}Cerca de ${left} jogadores seguem vivos. O campeão sai em ${CAL.fmt(last)}.`});LIVES.commit();return}}catch(e){console.warn(e)}
+  return _ar.apply(this,arguments)}}
+{const _sd=CAL.startDay;CAL.startDay=function(d){const r=_sd.apply(this,arguments);try{const Q=LIVES.s.newsQ||[];if(Q.length){const now=Q.filter(x=>x.d<=d);LIVES.s.newsQ=Q.filter(x=>x.d>d);now.forEach(x=>{try{_arOrig(x.o)}catch(e){}});LIVES.commit()}}catch(e){}return r}}
+function _arOrig(o){const k=TOUR.g;TOUR.g=null;try{CIRC.article(o)}finally{TOUR.g=k}}
+/* guarda em que dia você caiu */
+{const _fn=CAL.finish;CAL.finish=function(key,res){const r=_fn.apply(this,arguments);try{const A=this.st(),dn=A.done[key],ev=this.byKey(key);if(dn&&ev&&!dn.bd&&!dn.noshow)dn.bd=Math.max(1,this.today()-ev.first+1)}catch(e){}return r}}
