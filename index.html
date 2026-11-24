@@ -593,6 +593,21 @@ body.arena-on{overflow:hidden}
 .bigrow b{font-size:14px}
 .agrow.bigrow{display:block}.bigrow .agact{margin-top:6px;text-align:left}.bigrow .vtag{white-space:nowrap}
 .hu-bk{flex:none;width:34px;height:34px;border-radius:50%;padding:0 0 3px;font-size:26px;line-height:1;font-weight:700;background:rgba(240,201,110,.14);border:1px solid var(--gold);color:var(--gold2);display:flex;align-items:center;justify-content:center;margin-right:-2px}
+/* ===== v62b: nada por cima das cartas ===== */
+.pseat .ptime{left:auto;right:14px;top:-12px;transform:none}
+.arena .pseat .ptime,.arena .pemo,.arena .ppatch{display:none}
+.pact:empty{display:none}
+.arena .pact{position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:2px;font-size:11px;line-height:1.2;min-height:0;background:rgba(0,0,0,.65);border-radius:8px;padding:1px 7px;white-space:nowrap;z-index:2;pointer-events:none}
+.arena .pinfo{position:relative}
+.astrip{display:none}
+.arena .astrip{display:flex;justify-content:center;align-items:flex-start;gap:6px;flex-wrap:wrap;padding:0 10px;min-height:22px;position:relative;z-index:9}
+.astrip .dtag{margin:0}
+.astrip .sctag{font-size:12px;background:rgba(240,201,110,.12);border:1px solid rgba(240,201,110,.4);color:var(--gold2);border-radius:10px;padding:2px 9px;white-space:nowrap}
+.astrip .dbub{top:calc(100% + 4px);max-width:min(300px,88vw);font-size:13px}
+.arena .pcards .card{box-shadow:0 2px 6px rgba(0,0,0,.45)}
+.arena .pseat.me .pcards{position:relative;z-index:4}
+@media (pointer:coarse){.arena .twrap{padding-top:max(env(safe-area-inset-top),56px)}}
+.astrip .dtag{position:static}.astrip .dbub{left:50%}
 </style>
 </head>
 <body>
@@ -5250,8 +5265,10 @@ const ARENA={
   back(T){const show=!!(T.g&&T.arenaOff&&!T.g.finished&&!T.g.paused);let b=T.root.querySelector(':scope>.aback');
     if(show&&!b){b=document.createElement('button');b.className='aback pri';b.textContent='🎮 Voltar pra mesa';b.onclick=()=>{T.arenaOff=false;T.render()};T.root.appendChild(b)}
     if(!show&&b)b.remove()},
+  strip(T,tb){const tw=tb.closest('.twrap');if(!tw)return;let st=tw.querySelector(':scope>.astrip');if(!st){st=document.createElement('div');st.className='astrip';const ab=tw.querySelector('.abar');ab?ab.after(st):tw.prepend(st)}
+    st.innerHTML='';tb.querySelectorAll('.pcenter>.dtag,.pcenter>.sctag').forEach(e=>st.appendChild(e))},
   /* lugares acompanham a mesa inclinada */
-  persp(tb){tb.querySelectorAll('.pseat,.pchip,.pdealer').forEach(e=>{const x=parseFloat(e.style.left),y=parseFloat(e.style.top);if(isNaN(x)||isNaN(y))return;const f=.76+.2*y/100;e.style.left=(50+(x-50)*f).toFixed(2)+'%';e.style.top=(y<50?y+(50-y)*.12:y).toFixed(2)+'%'})},
+  persp(tb){tb.querySelectorAll('.pseat,.pchip,.pdealer').forEach(e=>{const x=parseFloat(e.style.left),y=parseFloat(e.style.top);if(isNaN(x)||isNaN(y))return;const f=.86+.14*y/100;e.style.left=(50+(x-50)*f).toFixed(2)+'%';e.style.top=(y<50?y+(50-y)*.12:y).toFixed(2)+'%'})},
   /* cartas: saem do dealer, viram na frente; cartas fechadas viram no showdown */
   cards(T,tb){const g=T.g,now=Date.now(),R=tb.getBoundingClientRect(),ox=R.width/2,oy=R.height*.16;if(T._dkH!==g.hands){T._dkH=g.hands;T._dk=new Map();T._dkN=0}
     const seats=[...tb.querySelectorAll('.pseat')];let k=0,snd=[];
@@ -5279,7 +5296,7 @@ const ARENA={
   badges(T,tb){const g=T.g,E=g.eqs;if(!E||E.h!==g.hands||g.over)return;const seats=tb.querySelectorAll('.pseat'),mx=Math.max(...Object.values(E.v));
     Object.entries(E.v).forEach(([i,v])=>{const s=seats[i],inf=s&&s.querySelector('.pinfo');if(inf)inf.insertAdjacentHTML('beforeend',`<span class="peq${v===mx?' lead':''}">${Math.round(v*100)}%</span>`)})},
   /* chamado depois de cada desenho da mesa */
-  post(T,tb){const g=T.g;this.sync(T);if(T.root.classList.contains('arena'))this.persp(tb);this.cards(T,tb);this.ring(T,tb);this.badges(T,tb);
+  post(T,tb){const g=T.g;this.sync(T);if(T.root.classList.contains('arena')){this.persp(tb);this.strip(T,tb)}this.cards(T,tb);this.ring(T,tb);this.badges(T,tb);
     tb.classList.toggle('sus',!!(g.sus&&g.sus===g.hands&&!g.over));if(g.sus===g.hands&&!g.over)tb.insertAdjacentHTML('beforeend','<div class="psus">RIVER…</div>');
     if(typeof SFX!=='undefined'){if(g.toAct===0&&!g.over&&T._sT!==g.hands+':'+g.street){T._sT=g.hands+':'+g.street;SFX.play('turn')}
       if(g.over&&T._sO!==g.hands){T._sO=g.hands;const t=g.eqT;if(t&&t.h===g.hands){const w=g.players.findIndex(p=>p.won>0);if(w>=0&&t.v[w]!=null&&t.v[w]<.3)setTimeout(()=>SFX.play('ooh'),250)}}}}};

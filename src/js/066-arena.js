@@ -24,8 +24,10 @@ const ARENA={
   back(T){const show=!!(T.g&&T.arenaOff&&!T.g.finished&&!T.g.paused);let b=T.root.querySelector(':scope>.aback');
     if(show&&!b){b=document.createElement('button');b.className='aback pri';b.textContent='🎮 Voltar pra mesa';b.onclick=()=>{T.arenaOff=false;T.render()};T.root.appendChild(b)}
     if(!show&&b)b.remove()},
+  strip(T,tb){const tw=tb.closest('.twrap');if(!tw)return;let st=tw.querySelector(':scope>.astrip');if(!st){st=document.createElement('div');st.className='astrip';const ab=tw.querySelector('.abar');ab?ab.after(st):tw.prepend(st)}
+    st.innerHTML='';tb.querySelectorAll('.pcenter>.dtag,.pcenter>.sctag').forEach(e=>st.appendChild(e))},
   /* lugares acompanham a mesa inclinada */
-  persp(tb){tb.querySelectorAll('.pseat,.pchip,.pdealer').forEach(e=>{const x=parseFloat(e.style.left),y=parseFloat(e.style.top);if(isNaN(x)||isNaN(y))return;const f=.76+.2*y/100;e.style.left=(50+(x-50)*f).toFixed(2)+'%';e.style.top=(y<50?y+(50-y)*.12:y).toFixed(2)+'%'})},
+  persp(tb){tb.querySelectorAll('.pseat,.pchip,.pdealer').forEach(e=>{const x=parseFloat(e.style.left),y=parseFloat(e.style.top);if(isNaN(x)||isNaN(y))return;const f=.86+.14*y/100;e.style.left=(50+(x-50)*f).toFixed(2)+'%';e.style.top=(y<50?y+(50-y)*.12:y).toFixed(2)+'%'})},
   /* cartas: saem do dealer, viram na frente; cartas fechadas viram no showdown */
   cards(T,tb){const g=T.g,now=Date.now(),R=tb.getBoundingClientRect(),ox=R.width/2,oy=R.height*.16;if(T._dkH!==g.hands){T._dkH=g.hands;T._dk=new Map();T._dkN=0}
     const seats=[...tb.querySelectorAll('.pseat')];let k=0,snd=[];
@@ -53,7 +55,7 @@ const ARENA={
   badges(T,tb){const g=T.g,E=g.eqs;if(!E||E.h!==g.hands||g.over)return;const seats=tb.querySelectorAll('.pseat'),mx=Math.max(...Object.values(E.v));
     Object.entries(E.v).forEach(([i,v])=>{const s=seats[i],inf=s&&s.querySelector('.pinfo');if(inf)inf.insertAdjacentHTML('beforeend',`<span class="peq${v===mx?' lead':''}">${Math.round(v*100)}%</span>`)})},
   /* chamado depois de cada desenho da mesa */
-  post(T,tb){const g=T.g;this.sync(T);if(T.root.classList.contains('arena'))this.persp(tb);this.cards(T,tb);this.ring(T,tb);this.badges(T,tb);
+  post(T,tb){const g=T.g;this.sync(T);if(T.root.classList.contains('arena')){this.persp(tb);this.strip(T,tb)}this.cards(T,tb);this.ring(T,tb);this.badges(T,tb);
     tb.classList.toggle('sus',!!(g.sus&&g.sus===g.hands&&!g.over));if(g.sus===g.hands&&!g.over)tb.insertAdjacentHTML('beforeend','<div class="psus">RIVER…</div>');
     if(typeof SFX!=='undefined'){if(g.toAct===0&&!g.over&&T._sT!==g.hands+':'+g.street){T._sT=g.hands+':'+g.street;SFX.play('turn')}
       if(g.over&&T._sO!==g.hands){T._sO=g.hands;const t=g.eqT;if(t&&t.h===g.hands){const w=g.players.findIndex(p=>p.won>0);if(w>=0&&t.v[w]!=null&&t.v[w]<.3)setTimeout(()=>SFX.play('ooh'),250)}}}}};
