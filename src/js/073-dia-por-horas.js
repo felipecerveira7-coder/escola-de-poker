@@ -38,4 +38,4 @@ function DT(d){try{if(d==null||!LIVES.s||!LIVES.s.calStart)return'';const x=CAL.
 {const _sd=CAL.startDay;CAL.startDay=function(d){const r=_sd.apply(this,arguments);try{const Q=LIVES.s.newsQ||[];if(Q.length){const now=Q.filter(x=>x.d<=d);LIVES.s.newsQ=Q.filter(x=>x.d>d);now.forEach(x=>{try{_arOrig(x.o)}catch(e){}});LIVES.commit()}}catch(e){}return r}}
 function _arOrig(o){const k=TOUR.g;TOUR.g=null;try{CIRC.article(o)}finally{TOUR.g=k}}
 /* guarda em que dia você caiu */
-{const _fn=CAL.finish;CAL.finish=function(key,res){const r=_fn.apply(this,arguments);try{const A=this.st(),dn=A.done[key],ev=this.byKey(key);if(dn&&ev&&!dn.bd&&!dn.noshow)dn.bd=Math.max(1,this.today()-ev.first+1)}catch(e){}return r}}
+{const _fn=CAL.finish;CAL.finish=function(key,res){const r=_fn.apply(this,arguments);try{const A=this.st(),dn=A.done[key],ev=/^[a-z]+@\d+/.test(key)?this.byKey(key):null;if(dn&&ev&&!dn.bd&&!dn.noshow)dn.bd=Math.max(1,this.today()-ev.first+1)}catch(e){}return r}}

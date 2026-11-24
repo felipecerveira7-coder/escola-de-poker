@@ -17,7 +17,7 @@ const BIG={
      {id:'mundial',months:[6],wd:1,nth:1,city:'Las Vegas',sat:{dow:0,buy:5000,nm:'Satélite online pro Mundial'}}],
   ids:['main','etapa','nac','latam','mundial'],
   /* dia do jogo em que começa o evento B no mês de d (ou null) */
-  start(B,d){const t=CAL.date(d),y=t.getFullYear(),m=t.getMonth();if(!B.months.includes(m))return null;const x=new Date(y,m,1,12);while(x.getDay()!==B.wd)x.setDate(x.getDate()+1);x.setDate(x.getDate()+7*(B.nth-1));let s=Math.round((x.getTime()-LIVES.s.calStart)/864e5)+1;const ms=CAL.mainStart(s);if(ms&&s+2>=ms&&s<=ms+2)s-=7;return s},
+  start(B,d){if(!isFinite(d))return null;const t=CAL.date(d),y=t.getFullYear(),m=t.getMonth();if(!B.months.includes(m))return null;const x=new Date(y,m,1,12);while(x.getDay()!==B.wd)x.setDate(x.getDate()+1);x.setDate(x.getDate()+7*(B.nth-1));let s=Math.round((x.getTime()-LIVES.s.calStart)/864e5)+1;const ms=CAL.mainStart(s);if(ms&&s+2>=ms&&s<=ms+2)s-=7;return s},
   next(B,d){for(let k=0;k<400;k+=20){const s=this.start(B,d+k);if(s&&s>d)return s}return null},
   ev(B,s,d){const E=EVTS[B.id];return{id:B.id,key:B.id+'@'+s,first:s,part:d-s,E:Object.assign({},E,{nm:B.id==='nac'?`${E.nm} · ${B.city}`:E.nm})}}};
 {const _ev=CAL.events;CAL.events=function(d){for(const B of BIG.L){const s=BIG.start(B,d);if(s!=null&&d>=s&&d<s+EVTS[B.id].days)return[BIG.ev(B,s,d)]}
