@@ -5711,6 +5711,10 @@ DSC.S={motel:['Essa suíte tá à sua altura, hein?','Vem cá, deixa eu te olhar
   bar:['Sabe jogar sinuca?','Mais uma rodada?','Gostou da galera?'],chique:['Já tinha vindo num lugar assim?','Escolhe o vinho, confio em ti.','Tá linda hoje, sério.'],
   jantar:['Que vinho bom, né?','Me conta um segredo teu.','Tô gostando muito de hoje.'],lanche:['Batata com cheddar ou sem?','Tu é de doce ou salgado?','Milk-shake dividido?']};
 {const _fs=DATE.fsug;DATE.fsug=function(){const d=this.st&&this.st(),S=d&&DSC.S[d.k];if(S&&Math.random()<.6)return S.slice().sort(()=>Math.random()-.5);return _fs.apply(this,arguments)}}
+/* pedido do Felipe (uma vez só): voltar o dia do encontro pra sair de novo com quem ele está namorando */
+function redoDateOnce(){const s=LIFE.s;if(!s||s.fixRedo1||!CAL.on()||!s.love)return;s.fixRedo1=1;if(!(s.lastDate&&s.lastDate.d===CAL.today()))return;
+  if(s.did)delete s.did.date;s.dnow=null;s.hr=Math.min(CLK.now(),18);s.lastDate=null;LIFE.note('↩️',`Dá pra sair de novo com ${s.love.nm}`,`O relógio voltou pras ${CLK.fmt(s.hr)} e o encontro de hoje foi liberado de novo. Chama no celular ou no café do mapa.`);LIFE.commit()}
+{const _rl=renderLife;renderLife=function(){try{redoDateOnce()}catch(e){}return _rl.apply(this,arguments)}}
 </script>
 </body>
 </html>
