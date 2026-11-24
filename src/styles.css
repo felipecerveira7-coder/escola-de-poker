@@ -614,3 +614,5 @@ body.arena-on{overflow:hidden}
 @keyframes beam{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
 .dwave{animation:wav 3s ease-in-out infinite alternate}@keyframes wav{to{transform:translateY(3px)}}
 .dball{animation:twk 1.2s infinite}
+.ifx{margin:8px 0;padding:10px;border-radius:12px;background:rgba(0,0,0,.2);border:1px solid var(--line)}
+.ifr{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;padding:3px 0;font-size:13px}.ifr>span:first-child{flex:1;min-width:150px}.ifr .muted{flex-basis:100%;font-size:11px}

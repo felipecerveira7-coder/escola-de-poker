@@ -22,7 +22,7 @@ const TELL={
   const _sd=P.showdown;P.showdown=function(){try{TELL.learnFrom(this)}catch(e){console.warn(e)}return _sd.apply(this,arguments)};
   /* a leitura do tempo agora usa o que a mesa aprendeu com você, pra qualquer ação (aposta, call ou check demorado) */
   P.tellAdj=function(i,X){const g=this.g,ht=g.hTell,me=g.players[0];if(!ht||ht.hand!==g.hands||!me.inHand||me.folded)return X;const kind=TELL.kind(ht);if(!kind)return X;
-    const b=TELL.belief(this,g.players[i].name,kind),e=(b.p-.5)*2*(b.sharp?1:.6)*(typeof LIFE!=='undefined'&&LIFE.has&&LIFE.has('oculos')?.5:1);
+    const b=TELL.belief(this,g.players[i].name,kind),e=(b.p-.5)*2*(b.sharp?1:.6)*(typeof wearsGlasses==='function'&&wearsGlasses()?.5:1);
     const agg=(ht.type==='raise'||ht.type==='bet')&&me.bet>0;
     if(agg){X.M+=.05*e;X.B*=Math.max(.3,1-.35*e)}else if(ht.type==='check'){X.B*=Math.max(.3,1-.4*e);X.A=Math.max(0,Math.min(1,X.A-.08*e))}else if(ht.type==='call'){X.B*=Math.max(.4,1-.3*e)}
     return X}}
