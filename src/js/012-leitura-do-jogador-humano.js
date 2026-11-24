@@ -232,7 +232,7 @@ class Table{
       if(c&&c.used<cards){const k=cards-c.used;if(k>0)this.log(`<span class="muted">⏱ ${p.name} usou ${k>1?k+' cartões':'um cartão'} de tempo.</span>`)}
       if(secs>=15&&d.type!=='fold'&&d.type!=='check')this.log(`<span class="muted">🤔 ${p.name} pensou ${Math.round(secs)}s antes de ${d.type==='raise'?(d.to>=p.stack+p.bet?'ir all-in':'aumentar'):'pagar'}.</span>`);
       else if(rush)this.log(`<span class="muted">⏰ ${p.name} decidiu no último segundo.</span>`);
-      const ht=g.hTell;if(ht&&ht.hand===g.hands&&ht.secs>=12&&(d.type==='call'||d.type==='raise')&&LIVES.on()&&Math.random()<.25){const t=['Pensou bastante, hein. Vou pagar pra ver.','Demorou demais pra ser forte.','Esse tempo todo… tô desconfiado.'];this.chatMsg(p.name,t[Math.random()*t.length|0],'talk')}
+      const ht=g.hTell;if(ht&&ht.hand===g.hands&&ht.secs>=12&&(d.type==='call'||d.type==='raise')&&LIVES.on()&&Math.random()<.25){const t=(typeof TELL!=='undefined'&&TELL.say(this,p.name))||['Pensou bastante, hein.'];this.chatMsg(p.name,t[Math.random()*t.length|0],'talk')}
       this.act(j,d.type,d.to)};
     this.botClk={j,base:on?base:0,t0:Date.now(),used:0,cards};this._pendAct=doAct;
     const tick=()=>{const c=this.botClk;if(!c){clearInterval(this._bti);return}const el=(Date.now()-c.t0)/1000;

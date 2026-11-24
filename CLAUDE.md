@@ -45,6 +45,7 @@ Os objetos globais:
 | `dayTaken`, `regRefund` | Não deixa se inscrever no torneio de hoje se o dia já foi usado; inscrição que não deu pra jogar por dia ocupado é devolvida sem falta |
 | `tStartH`, `tLate`, `ITEMH`, `dayDid` | Dia medido em horas e energia: cada torneio tem horário (inscrição tardia de 2–3h), cada atividade gasta horas; não existe mais "uma coisa por dia" (`A.used` é só registro). Inscrito que chega atrasado entra com fichas blindadas (`lateFactor`); `tourAlarm` avisa quando o relógio passa da hora; `tourClash` avisa antes do encontro |
 | `DSC` | Cenário desenhado, clima pra IA, ações e sugestões próprias de cada lugar do encontro; `DATE.fade` ("Apagar a luz": corte de cena, nada explícito) |
+| `TELL` | Leitura do tempo do jogador: guarda o tempo de cada decisão, aprende no showdown se demora = forte ou fraco (`LIVES.s.htell`); bots atentos usam o histórico, casuais acreditam no clichê "demorou = fraco" |
 | `CINE` | Momentos de cinema: heads-up, mesa final, campeão com confete, manchete do jornal, eliminação, notificação de mensagem |
 
 A pasta `modules/` é histórica (fontes avulsas de versões antigas); a fonte de verdade é `src/`.
