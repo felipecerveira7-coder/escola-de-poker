@@ -1,7 +1,7 @@
 /* ----- painel Hoje ----- */
 const HOJE={
   html(){const s=LIFE.s,t=CAL.today(),A=CAL.st(),me=CIRC.me(),L=LIFE.level(),rows=[];const add=(e,x,go,cls)=>rows.push(`<button class="hrow ${cls||''}" data-go="${go}"><span class="he">${e}</span><span class="hx">${x}</span><span class="ha">›</span></button>`);
-    CAL.events(t).forEach(ev=>{const r=A.reg[ev.key],dn=A.done[ev.key];if(dn)return;if(tLate(ev))return;if(r||CAL.regOpen(ev))add(ev.E.emo,`<b>${ev.E.nm}</b> hoje${r?' · você está inscrito':` · inscrição R$ ${brl(ev.E.buy)}`}`,'hash:#torneio',r?'hot':'')});
+    CAL.events(t).forEach(ev=>{const r=A.reg[ev.key],dn=A.done[ev.key];if(dn)return;if(tLate(ev))return;if(r||CAL.regOpen(ev))add(ev.E.emo,`<b>${ev.E.nm}</b> hoje às ${CLK.fmt(ev.part>0?13:tStartH(ev))}${r?' · você está inscrito':` · inscrição R$ ${brl(ev.E.buy)}`}`,'hash:#torneio',r?'hot':'')});
     CAL.items(t).forEach(it=>add(it.emo||'📌',`<b>${lx(it.title)}</b> hoje`,'hash:#torneio','hot'));
     if(s.dnow&&!s.dnow.over)add('💞',`Você está num encontro com ${lx(s.dnow.nm)}`,'date','hot');
     if(s.press&&!s.press.over)add('🎤','A imprensa está te esperando','press','hot');

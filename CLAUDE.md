@@ -43,7 +43,7 @@ Os objetos globais:
 | `BIG`, `bigPanel`, `fieldFill` | Torneios grandes: Main Event Nacional (4x/ano, ~R$ 1 mi), Campeonato Latino (abril, ~R$ 3 mi), Mundial em Las Vegas (julho, 1º leva R$ 20 mi); campos de 108 completados com jogadores de fora; satélites; painel "Os grandes do ano" na Agenda |
 | `NAV` | Histórico de navegação; botão ‹ Voltar na barra do topo |
 | `dayTaken`, `regRefund` | Não deixa se inscrever no torneio de hoje se o dia já foi usado; inscrição que não deu pra jogar por dia ocupado é devolvida sem falta |
-| `tStartH`, `tLate`, `ITEMH`, `dayDid` | Dia medido em horas e energia: cada torneio tem horário (inscrição tardia de 2–3h), cada atividade gasta horas; não existe mais "uma coisa por dia" (`A.used` é só registro) |
+| `tStartH`, `tLate`, `ITEMH`, `dayDid` | Dia medido em horas e energia: cada torneio tem horário (inscrição tardia de 2–3h), cada atividade gasta horas; não existe mais "uma coisa por dia" (`A.used` é só registro). Inscrito que chega atrasado entra com fichas blindadas (`lateFactor`); `tourAlarm` avisa quando o relógio passa da hora; `tourClash` avisa antes do encontro |
 | `CINE` | Momentos de cinema: heads-up, mesa final, campeão com confete, manchete do jornal, eliminação, notificação de mensagem |
 
 A pasta `modules/` é histórica (fontes avulsas de versões antigas); a fonte de verdade é `src/`.

@@ -30,6 +30,7 @@ const DATE={busy:false,min:false,key:'',
     if(CAL.st().items.some(x=>x.kind==='love'&&x.status==='pending'&&x.ref&&x.ref.date&&x.day===CAL.today()))return'Já tem um encontro marcado pra hoje na Agenda.';
     const today=this.whenTxt(k)!=='amanhã'&&!CAL.blockers();
     if(!today){const day=CAL.free(CAL.today()+1,CAL.today()+8);if(!day)return'Sem dia livre na próxima semana.';return LOVE.book(k,day)}
+    {const n=CLK.now(),cl=tourClash(Math.max(k==='viagem'?7:19,n)-n+(this.HRS[k]||3));if(cl&&this._clashOk!==k+'@'+CAL.today()){this._clashOk=k+'@'+CAL.today();return`⚠️ O ${cl} e você está inscrito. Se sair agora, chega atrasado e perde fichas (ou perde o torneio). Toque de novo pra ir mesmo assim, ou jogue o torneio antes.`}}
     return this.start(k,via)},
   start(k,via){const s=LIFE.s,L=s.love;if(!L)return'';LOVE.tipo(L);const D=LOVE.D[k]||LOVE.D.jantar;const c=LOVE.cost(k);
     if(!WALLET.can(c))return`Saldo insuficiente: ${D.nm} custa R$ ${brl(c)}.`;WALLET.add(-c,`${D.nm} com ${L.nm}`);LIFE.mark('date');
