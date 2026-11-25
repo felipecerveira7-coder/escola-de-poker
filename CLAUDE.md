@@ -49,6 +49,7 @@ Os objetos globais:
 | `IGRP`, `ICAP`, `softCap`, `itemPanel` | Efeito dos itens: itens do mesmo tipo não somam (só o melhor), acima do limite rendem 1/4 (máx. 1,5x), óculos só valem no look da mesa, loja avisa quando um item não rende, painel no perfil |
 | `WEARFX`, `clFx`, `ifxNew` | Itens v66 (mente, estudo, grind online, viagem, roupas) com efeitos novos: `calm` (desgaste −%), `tcard` (cartões de tempo), `trav` (viagem/jet lag), `rbk` (rakeback), `study` (treino em dobro); closet mostra o que cada peça rende no look e sempre |
 | `PEND` | 📱 do topo leva direto ao próximo pendente (notificações → namoro → conversas não lidas → entrevista); faixa "Ainda falta ver" no celular |
+| `LIVE_BB`, `liveLevels`, `stTxt`, `kf` | Fichas realistas (v68): clube turbo 15 mil, sábado 30 mil, domingo/Main/etapa 40 mil (estilo BSOP), Nacional/Latino 100 mil (300/600), Mundial 60 mil (estilo WSOP), todos com ante do BB; `kf` abrevia fichas na mesa (152,4k · 1,25M); agenda mostra o stack |
 | `CINE` | Momentos de cinema: heads-up, mesa final, campeão com confete, manchete do jornal, eliminação, notificação de mensagem |
 
 A pasta `modules/` é histórica (fontes avulsas de versões antigas); a fonte de verdade é `src/`.

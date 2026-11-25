@@ -2065,14 +2065,14 @@ Responda só com JSON: {"replies":[{"from":"Nome","text":"..."}]}`;
       const s=p.st,hl=hud&&s.hands?`<div class="phud">VPIP ${Math.round(s.vpip/s.hands*100)} · PFR ${Math.round(s.pfr/s.hands*100)} · AF ${(s.agg/Math.max(1,s.calls)).toFixed(1)}</div>`:'';
       h+=`<div class="${cls.join(' ')}" style="${sty}">${p.human&&this.clk&&i===g.toAct&&!g.over?`<span class="ptime">⏱ ${Math.ceil(this.clk.left/1000)}</span>`:''}${!p.human&&this.botClk&&this.botClk.j===i?`<span class="ptime" data-bt>⏱ ${this.botClk.base?Math.max(0,Math.ceil(this.botClk.base+this.botClk.used*30-(Date.now()-this.botClk.t0)/1000)):0}</span>`:''}<div class="pcards">${cards}</div>
         <div class="pinfo">${(()=>{const bb=this.bub&&this.bub[p.name];return bb&&bb.until>Date.now()?`<div class="pbub${y<34?' dn':''}${x<30?' l':x>70?' r':''}${bb.kind==='ask'?' ask':''}${bb.kind==='info'?' info':''}" data-bub="${p.name}">${bb.t}</div>`:''})()}${!p.human&&LIVES.on()?(()=>{const e=LIVES.mood(p.name);return e?`<span class="pemo" data-emo="${p.name}">${e[0]}</span>`:''})():''}${typeof FACE!=='undefined'?`<span class="pav"${!p.human&&typeof LIVES!=='undefined'&&LIVES.s&&LIVES.s.bots[p.name]?` data-pf="${p.name}"`:''}>${p.human?(LIFE.s?FACE.me('mesa',44):FACE.svg({g:'m',age:28,skin:'#c68b5e',hc:'#2b1d14',hair:'curto',cl:'camiseta',top:'#3f7d64',bg:'#1f6a50'},44,{})):FACE.bot(p.name,44,g.over&&p.won>0?'feliz':undefined)}</span>`:''}<div class="pname"${!p.human&&typeof LIVES!=='undefined'&&LIVES.s&&LIVES.s.bots[p.name]?` data-pf="${p.name}"`:''}>${p.name}${p.human&&typeof LIFE!=='undefined'?LIFE.patch():''}${pm[i]&&pm[i]!=='BTN'?`<span class="ppos">${pm[i]}</span>`:''}</div>
-        <div class="pstack">${nf(p.stack)}${this.mode==='tour'?` <span class="muted bbx" style="font-size:11px">${(p.stack/g.bb).toFixed(0)} BB</span>`:''}</div>
+        <div class="pstack">${kf(p.stack)}${this.mode==='tour'?` <span class="muted bbx" style="font-size:11px">${(p.stack/g.bb).toFixed(0)} BB</span>`:''}</div>
         ${!p.human&&showSt?`<div class="pstyle">${STY[p.style].nm}</div>`:''}${hl}</div><div class="pact">${p.last||''}</div></div>`;
-      if(p.bet>0&&!g.over){const[bx,by]=pt(i,.6);h+=`<div class="pchip" style="left:${bx}%;top:${by}%">${nf(p.bet)}</div>`}
+      if(p.bet>0&&!g.over){const[bx,by]=pt(i,.6);h+=`<div class="pchip" style="left:${bx}%;top:${by}%">${kf(p.bet)}</div>`}
       if(i===g.button&&p.inHand){const[dx,dy]=pt(i,.68,.3);h+=`<div class="pdealer" style="left:${dx}%;top:${dy}%">D</div>`}});
     const bd=g.board.map(c=>cardHTML(c,g.hl.size?(g.hl.has(c.id)?'hl':'dim'):'')).join('')+'<span class="slot"></span>'.repeat(5-g.board.length);
     {const D=this.dealerObj(),db=this.dbub&&this.dbub.until>Date.now()?this.dbub.t:'';
       var dtg=`<div class="dtag" data-dl>${D.emo} ${D.name}${db?`<div class="dbub">${db}</div>`:''}</div>`}
-    h+=`<div class="pcenter">${dtg}${g.scout&&!g.scout.done?`<div class="sctag">👀 ${SCOUTS[g.scout.k].nm} assistindo</div>`:''}<div class="pboard">${bd}</div><div class="ppot${!g.over&&this.pot()>0?' has':''}">${g.over?'':'Pote: '+nf(this.pot())}</div><div class="pmsg">${g.msg}</div></div>`;
+    h+=`<div class="pcenter">${dtg}${g.scout&&!g.scout.done?`<div class="sctag">👀 ${SCOUTS[g.scout.k].nm} assistindo</div>`:''}<div class="pboard">${bd}</div><div class="ppot${!g.over&&this.pot()>0?' has':''}">${g.over?'':'Pote: '+kf(this.pot())}</div><div class="pmsg">${g.msg}</div></div>`;
     tb.innerHTML=h;
     {const dt=tb.querySelector('[data-dl]');if(dt)dt.onclick=ev=>{ev.stopPropagation();const D=this.dealerObj();this.dbub={t:`${D.name}, ${D.age} anos (${D.tipo}). ${D.story}`,until:Date.now()+7000};clearTimeout(this._db);this._db=setTimeout(()=>this.renderTable(),7100);this.renderTable()}}
     tb.querySelectorAll('[data-emo]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();const n=e.dataset.emo,m=LIVES.mood(n);if(!m)return;this.bub=this.bub||{};this.bub[n]={t:`${m[0]} ${m[1]}`,kind:'info',until:Date.now()+4000};clearTimeout(this._bt);this._bt=setTimeout(()=>this.renderTable(),4100);this.renderTable()});
@@ -3760,7 +3760,7 @@ const LEG={
     if(TOUR.g&&!TOUR.g.finished&&!(TOUR.g.players[0]&&TOUR.g.players[0].out))return'Termine o torneio em andamento primeiro.';
     const tc=CLK.can(3,'um heads-up');if(tc)return tc;if(!WALLET.can(L.buy))return`Precisa de R$ ${brl(L.buy)} pra sentar.`;
     S[id]=Object.assign(r,{last:t});WALLET.add(-L.buy,`Heads-up contra ${L.nm}`);try{if(SAVES.data.tour&&!(TOUR.g&&TOUR.g.finished))SAVES.del('tour')}catch(e){}
-    const x=STRUCTS.ps,st=STY[L.st]?L.st:'tag';TOUR.stop();TOUR.lastMsg='';try{LIFE.onStart('tour',false)}catch(e){}TOUR.paidNow=L.buy;
+    const x=STRUCTS.sab||STRUCTS.ps,st=STY[L.st]?L.st:'tag';TOUR.stop();TOUR.lastMsg='';try{LIFE.onStart('tour',false)}catch(e){}TOUR.paidNow=L.buy;
     TOUR.startGame({stack:x.stack,hpl:10,sb:x.levels[0][0],bb:x.levels[0][1],levels:x.levels,anteType:x.anteType,structNm:x.nm,ev:{key:`leg@${id}@${t}`,nm:`Heads-up: ${L.nm}`,idx:0,stops:[],days:1,sat:0,buy:L.buy,leg:id},bots:1,names:[L.nm],styles:{[L.nm]:st}});
     TOUR.log(`<div class="lh lvl">${L.emo} Heads-up contra ${L.nm} · R$ ${brl(L.buy)} cada lado. Quem ficar com todas as fichas leva R$ ${brl(L.buy*2)}.</div>`);location.hash='#torneio';LIFE.commit();return''},
   done(id,res){const L=LEGS.find(x=>x.id===id),S=this.st(),r=S[id]=S[id]||{};if(!L)return;const me=CIRC.me();
@@ -4568,7 +4568,7 @@ function renderAgenda(){const t=CAL.today(),A=CAL.st();let h=calBar()+MIS.seg();
     else if(ev.part)act='';
     else if(open)act=`<button class="sm" data-ag="reg:${ev.key}">Inscrever · R$ ${brl(E.buy)}</button>${(()=>{const c=SPX.payer(E);return c?` <button class="sm" data-ag="regsp:${ev.key}">🤝 Pela verba ${c.emo}</button>`:''})()}`;
     else if(t<ev.first-E.reg)act=`<span class="muted">inscrições ${CAL.fmt(ev.first-E.reg)}</span>`;else act='<span class="muted">encerrado</span>';
-    return`<div class="agrow"><div><span class="agemo">${E.emo}</span> <b>${E.nm}</b>${E.days?` <span class="vtag">Dia ${ev.part+1}${ev.part===E.days-1?(E.days===3?' · mesa final':' · dia final'):''}</span>`:''}${r&&r.ticket?' <span class="vtag">🎫 pacote</span>':''}${r&&r.sp?` <span class="vtag">🤝 ${r.spNm}${r.cut?` · ${Math.round(r.cut*100)}%`:''}</span>`:''}<div class="muted" style="font-size:12px">${E.fmt==='sng'?'Mesa única':'Multimesas'} · ${ev.part>0?'retoma':'começa'} às ${CLK.fmt(ev.part>0?13:tStartH(ev))} · ${E.N} jogadores · buy-in R$ ${brl(E.buy)}${E.travel?` + viagem R$ ${brl(E.travel)}`:''} · ${E.sat?`1º ganha o pacote da etapa (R$ ${brl((()=>{const X=EVTS[(E.target||'etapa@').split('@')[0]]||EVTS.etapa;return X.buy+(X.travel||0)})())})`:`1º leva R$ ${brl(E.abs?E.abs[0]:E.buy*E.N*CIRC.pays(E.N)[0])}${E.minFame&&LIFE.s.fame<E.minFame?` · <span class="bad">fama ${E.minFame} ou satélite</span>`:''}`}${!r&&!dn&&!ev.part&&d>=t?(()=>{const b=SOC.brm(E);return` · <span class="brm ${b[0]}">${b[1]}</span>`})():''}</div></div><div class="agact">${act}</div></div>`};
+    return`<div class="agrow"><div><span class="agemo">${E.emo}</span> <b>${E.nm}</b>${E.days?` <span class="vtag">Dia ${ev.part+1}${ev.part===E.days-1?(E.days===3?' · mesa final':' · dia final'):''}</span>`:''}${r&&r.ticket?' <span class="vtag">🎫 pacote</span>':''}${r&&r.sp?` <span class="vtag">🤝 ${r.spNm}${r.cut?` · ${Math.round(r.cut*100)}%`:''}</span>`:''}<div class="muted" style="font-size:12px">${E.fmt==='sng'?'Mesa única':'Multimesas'} · ${ev.part>0?'retoma':'começa'} às ${CLK.fmt(ev.part>0?13:tStartH(ev))} · ${E.N} jogadores · buy-in R$ ${brl(E.buy)}${!ev.part&&stTxt(E)?' · '+stTxt(E):''}${E.travel?` + viagem R$ ${brl(E.travel)}`:''} · ${E.sat?`1º ganha o pacote da etapa (R$ ${brl((()=>{const X=EVTS[(E.target||'etapa@').split('@')[0]]||EVTS.etapa;return X.buy+(X.travel||0)})())})`:`1º leva R$ ${brl(E.abs?E.abs[0]:E.buy*E.N*CIRC.pays(E.N)[0])}${E.minFame&&LIFE.s.fame<E.minFame?` · <span class="bad">fama ${E.minFame} ou satélite</span>`:''}`}${!r&&!dn&&!ev.part&&d>=t?(()=>{const b=SOC.brm(E);return` · <span class="brm ${b[0]}">${b[1]}</span>`})():''}</div></div><div class="agact">${act}</div></div>`};
   const itRow=it=>`<div class="agrow"><div><span class="agemo">${it.emo}</span> <b>${lx(it.title)}</b><div class="muted" style="font-size:12px">${lx(it.desc||'')}</div></div><div class="agact">${it.day===t?`<button class="sm pri" data-ag="do:${it.id}">Fazer</button>`:''}${['hg','lesson','fam','love'].includes(it.kind)?` <button class="sm" data-ag="cx:${it.id}">desmarcar</button>`:''}${SOC.NG.includes(it.kind)?` <button class="sm" data-ag="ng:${it.id}">${SOC.ngOpen===it.id?'fechar':'🗣️ negociar'}</button>`:''}</div></div>${SOC.ngOpen===it.id?SOC.negRow(it):''}`;
   const today=CAL.events(t),its=CAL.items(t);
   h+=`<div class="panel"><h3>Hoje · ${CAL.fmt(t)}</h3>
@@ -5844,6 +5844,39 @@ const PEND={
   if(L.length&&!document.querySelector('.pnext')){const n=L.reduce((a,x)=>a+x.n,0),f=L[0];const h=`<button class="pnext" data-pnext="${lx(f.k)}">📱 Ainda falta ver: <b>${lx(f.t)}</b>${L.length>1?` e mais ${L.length-1}`:''} <span class="pnb">${n>9?'9+':n}</span> ›</button>`;
     const anchor=document.querySelector('.vtop .cityhd')||document.querySelector('.vtop');if(anchor)anchor.insertAdjacentHTML(anchor.classList.contains('cityhd')?'afterend':'afterbegin',h)}}}catch(e){console.warn(e)}return r}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-pnext]');if(!b)return;e.preventDefault();e.stopPropagation();HOJE.go(b.dataset.pnext)},true);
+// v68 · Fichas de torneio realistas
+// Fichas de torneio não valem dinheiro: o que muda é a profundidade em big blinds.
+// Referências: clubes BR (R$ 50–300 → 10–20 mil fichas), BSOP Main Event (40 mil),
+// BSOP Championship (100 mil, 300/600), WSOP Main Event (60 mil, 100/200, ante do BB).
+
+// Escada de blinds ao vivo (ante do big blind = 1 BB), números redondos como nos cassinos.
+const LIVE_BB=[200,300,400,500,600,800,1000,1200,1500,2000,2500,3000,4000,5000,6000,8000,10000,12000,15000,20000,25000,30000,40000,50000,60000,80000,100000,120000,150000,200000,250000,300000,400000,500000,600000,800000,1000000,1200000,1500000,2000000,2500000,3000000];
+function liveLevels(bb0){const i=Math.max(0,LIVE_BB.indexOf(bb0));return LIVE_BB.slice(i).map(b=>[b/2,b,b])}
+
+STRUCTS.clube={nm:'Clube turbo (Sit & Go / satélite)',stack:15000,hpl:8,anteType:'bb',
+  ds:'Como os torneios rápidos de clube no Brasil: 15.000 fichas, blinds 100/200 (75 BB), ante do big blind a partir do 5º nível. Os blinds quase dobram a cada nível.',
+  levels:LEVELS.map(([s,b,a])=>[s*10,b*10,a?b*10:0])};
+STRUCTS.sab={nm:'Clube regular (30 mil)',stack:30000,hpl:12,anteType:'bb',
+  ds:'Torneio regular de fim de semana: 30.000 fichas, blinds 100/200 com ante do big blind (150 BB).',levels:liveLevels(200)};
+STRUCTS.live={nm:'Main Event estilo BSOP (40 mil)',stack:40000,hpl:12,anteType:'bb',
+  ds:'Como o Main Event do BSOP: 40.000 fichas, blinds 100/200 com ante do big blind (200 BB).',levels:liveLevels(200)};
+STRUCTS.champ={nm:'Championship (100 mil)',stack:100000,hpl:12,anteType:'bb',
+  ds:'Como o BSOP Championship: 100.000 fichas, blinds 300/600 com ante do big blind (166 BB).',levels:liveLevels(600)};
+STRUCTS.wsop={nm:'Mundial estilo WSOP (60 mil)',stack:60000,hpl:12,anteType:'bb',
+  ds:'Como o Main Event da WSOP: 60.000 fichas, blinds 100/200 com ante do big blind (300 BB). O torneio mais profundo do ano.',levels:liveLevels(200)};
+
+// Cada evento com o stack proporcional ao buy-in.
+{const M={noite:['clube',8],turbo:['clube',8],sat:['clube',8],sabado:['sab',12],domingo:['live',12],etapa:['live',12],main:['live',12],nac:['champ',12],latam:['champ',12],mundial:['wsop',12]};
+  Object.entries(M).forEach(([k,[st,h]])=>{if(EVTS[k]){EVTS[k].st=st;EVTS[k].hpl=h}})}
+
+// Texto curto do stack para a agenda: "40 mil fichas (200 BB)".
+function stTxt(E){try{const x=STRUCTS[E&&E.st];if(!x)return'';return`${x.stack>=1000?nf(x.stack/1000)+' mil':nf(x.stack)} fichas (${Math.round(x.stack/x.levels[0][1])} BB)`}catch(e){return''}}
+
+// Fichas compactas na mesa: 45.300 · 152,4k · 1,25M
+function kf(n){n=Math.round(n||0);const a=Math.abs(n);
+  if(a<100000)return n.toLocaleString('pt-BR');
+  if(a<999950)return(n/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})+'k';
+  return(n/1e6).toLocaleString('pt-BR',{maximumFractionDigits:2})+'M'}
 </script>
 </body>
 </html>

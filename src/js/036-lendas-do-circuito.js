@@ -14,7 +14,7 @@ const LEG={
     if(TOUR.g&&!TOUR.g.finished&&!(TOUR.g.players[0]&&TOUR.g.players[0].out))return'Termine o torneio em andamento primeiro.';
     const tc=CLK.can(3,'um heads-up');if(tc)return tc;if(!WALLET.can(L.buy))return`Precisa de R$ ${brl(L.buy)} pra sentar.`;
     S[id]=Object.assign(r,{last:t});WALLET.add(-L.buy,`Heads-up contra ${L.nm}`);try{if(SAVES.data.tour&&!(TOUR.g&&TOUR.g.finished))SAVES.del('tour')}catch(e){}
-    const x=STRUCTS.ps,st=STY[L.st]?L.st:'tag';TOUR.stop();TOUR.lastMsg='';try{LIFE.onStart('tour',false)}catch(e){}TOUR.paidNow=L.buy;
+    const x=STRUCTS.sab||STRUCTS.ps,st=STY[L.st]?L.st:'tag';TOUR.stop();TOUR.lastMsg='';try{LIFE.onStart('tour',false)}catch(e){}TOUR.paidNow=L.buy;
     TOUR.startGame({stack:x.stack,hpl:10,sb:x.levels[0][0],bb:x.levels[0][1],levels:x.levels,anteType:x.anteType,structNm:x.nm,ev:{key:`leg@${id}@${t}`,nm:`Heads-up: ${L.nm}`,idx:0,stops:[],days:1,sat:0,buy:L.buy,leg:id},bots:1,names:[L.nm],styles:{[L.nm]:st}});
     TOUR.log(`<div class="lh lvl">${L.emo} Heads-up contra ${L.nm} · R$ ${brl(L.buy)} cada lado. Quem ficar com todas as fichas leva R$ ${brl(L.buy*2)}.</div>`);location.hash='#torneio';LIFE.commit();return''},
   done(id,res){const L=LEGS.find(x=>x.id===id),S=this.st(),r=S[id]=S[id]||{};if(!L)return;const me=CIRC.me();
