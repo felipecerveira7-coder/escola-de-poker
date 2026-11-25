@@ -620,3 +620,5 @@ body.arena-on{overflow:hidden}
 .clfx .clw{display:block;color:var(--gold2)}.clfx .clo{display:block;color:var(--muted)}
 .clrow .gl button{text-align:left}
 .pri .clfx .clw,.pri .clfx .clo{color:#3a2a0a}
+.pnext{display:flex;align-items:center;gap:6px;width:100%;margin:6px 0;padding:10px 12px;border-radius:12px;background:rgba(240,201,110,.12);border:1px solid rgba(240,201,110,.45);color:inherit;text-align:left;font-size:14px;animation:vin .25s}
+.pnext b{color:var(--gold2)}.pnext .pnb{margin-left:auto;background:#e0483e;color:#fff;font-size:11px;border-radius:999px;padding:2px 7px}

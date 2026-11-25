@@ -11,7 +11,7 @@ const {chromium}=require('playwright');
  await p.tap('[data-r="hdrT"]');await p.waitForTimeout(200);
  await p.tap('.hu-ph');await p.waitForTimeout(400);console.log('celular',await p.evaluate(()=>LIFE.tab),'notas',await p.evaluate(()=>document.querySelectorAll('[data-note]').length),'nao lidas depois de abrir',await p.evaluate(()=>LIFE.s.notes.filter(x=>!x.read).length));await p.screenshot({path:'x3.png'});
  await p.tap('[data-note="1"]');await p.waitForTimeout(300);console.log('burnout leva pra',await p.evaluate(()=>LIFE.tab));
- await p.tap('.hu-ph');await p.waitForTimeout(300);await p.tap('[data-note="2"]');await p.waitForTimeout(300);console.log('agenda',await p.evaluate(()=>location.hash));
+ await p.evaluate(()=>HOJE.go('tab:cel'));await p.waitForTimeout(300);await p.tap('[data-note="2"]');await p.waitForTimeout(300);console.log('agenda',await p.evaluate(()=>location.hash));
  await p.evaluate(()=>{location.hash='#vida';LIFE.tab='cel';renderLife()});await p.waitForTimeout(300);await p.tap('[data-vt="amigos"]');await p.waitForTimeout(300);console.log('amigos',await p.evaluate(()=>LIFE.tab),await p.evaluate(()=>document.querySelectorAll('[data-open]').length));
  await p.tap('[data-open]');await p.waitForTimeout(300);console.log('conversa',await p.evaluate(()=>LIFE.tab+' '+LIFE.open));
  await p.evaluate(()=>{LIFE.tab='hoje';renderLife()});await p.waitForTimeout(200);await p.tap('[data-city="p:bar"]');await p.waitForTimeout(400);console.log('mapa amigos',await p.evaluate(()=>LIFE.tab));

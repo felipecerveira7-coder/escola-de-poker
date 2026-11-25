@@ -48,13 +48,14 @@ Os objetos globais:
 | `TELL` | Leitura do tempo do jogador: guarda o tempo de cada decisão, aprende no showdown se demora = forte ou fraco (`LIVES.s.htell`); bots atentos usam o histórico, casuais acreditam no clichê "demorou = fraco" |
 | `IGRP`, `ICAP`, `softCap`, `itemPanel` | Efeito dos itens: itens do mesmo tipo não somam (só o melhor), acima do limite rendem 1/4 (máx. 1,5x), óculos só valem no look da mesa, loja avisa quando um item não rende, painel no perfil |
 | `WEARFX`, `clFx`, `ifxNew` | Itens v66 (mente, estudo, grind online, viagem, roupas) com efeitos novos: `calm` (desgaste −%), `tcard` (cartões de tempo), `trav` (viagem/jet lag), `rbk` (rakeback), `study` (treino em dobro); closet mostra o que cada peça rende no look e sempre |
+| `PEND` | 📱 do topo leva direto ao próximo pendente (notificações → namoro → conversas não lidas → entrevista); faixa "Ainda falta ver" no celular |
 | `CINE` | Momentos de cinema: heads-up, mesa final, campeão com confete, manchete do jornal, eliminação, notificação de mensagem |
 
 A pasta `modules/` é histórica (fontes avulsas de versões antigas); a fonte de verdade é `src/`.
 
 ## Onde fica cada coisa (não duplicar)
 
-- Barra do topo (`HUD`): saldo, energia, humor, hora. Avatar abre o perfil (com Closet); 📱 abre o celular (notificações e conversas).
+- Barra do topo (`HUD`): saldo, energia, humor, hora. Avatar abre o perfil (com Closet); 📱 leva ao próximo pendente (`PEND`).
 - Tela inicial da Vida: botões de avançar o dia, mapa da cidade, próximos dias, "Pra fazer agora".
 - Cada lugar do mapa abre uma aba; amigos/contatos ficam em `amigos`, home game junto da casa.
 - Antes de mostrar uma informação nova, veja se ela já existe em outro lugar.

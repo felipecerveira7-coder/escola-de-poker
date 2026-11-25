@@ -634,6 +634,8 @@ body.arena-on{overflow:hidden}
 .clfx .clw{display:block;color:var(--gold2)}.clfx .clo{display:block;color:var(--muted)}
 .clrow .gl button{text-align:left}
 .pri .clfx .clw,.pri .clfx .clo{color:#3a2a0a}
+.pnext{display:flex;align-items:center;gap:6px;width:100%;margin:6px 0;padding:10px 12px;border-radius:12px;background:rgba(240,201,110,.12);border:1px solid rgba(240,201,110,.45);color:inherit;text-align:left;font-size:14px;animation:vin .25s}
+.pnext b{color:var(--gold2)}.pnext .pnb{margin-left:auto;background:#e0483e;color:#fff;font-size:11px;border-radius:999px;padding:2px 7px}
 </style>
 </head>
 <body>
@@ -3940,7 +3942,7 @@ const AV={
 const HUD={last:'',
   render(){let el=document.getElementById('hud');const on=!!(LIFE.s&&LIVES.s&&CAL.on()&&!document.body.classList.contains('ttlon'));
     document.body.classList.toggle('hudOn',!!on);if(!on){if(el)el.style.display='none';return}
-    if(!el){el=document.createElement('div');el.id='hud';document.body.prepend(el);el.onclick=e=>{if(e.target.closest('[data-hud="look"]')){HOJE.go('perfil');return}if(e.target.closest('[data-hud="cel"]')){HOJE.go('tab:cel');return}LIFE.tab='hoje';location.hash='#vida';try{renderLife()}catch(x){}window.scrollTo({top:0,behavior:'smooth'})}}
+    if(!el){el=document.createElement('div');el.id='hud';document.body.prepend(el);el.onclick=e=>{if(e.target.closest('[data-hud="look"]')){HOJE.go('perfil');return}if(e.target.closest('[data-hud="cel"]')){PEND.go();return}LIFE.tab='hoje';location.hash='#vida';try{renderLife()}catch(x){}window.scrollTo({top:0,behavior:'smooth'})}}
     el.style.display='';const s=LIFE.s,e=Math.round(s.energy),m=s.mood,key=[WALLET.s.bal,e,m,CLK.fmt(),CAL.today(),JSON.stringify(s.look||{}),LIFE.unread()].join('|');if(key===this.last)return;this.last=key;
     el.innerHTML=`<button class="hu-av" data-hud="look" title="Seu perfil">${AV.svg('mesa',34)}</button><div class="hu-c"><div class="hu-r"><b class="${WALLET.s.bal<0?'bad':''}">${brlc(WALLET.s.bal)}</b><span class="hu-e" title="Energia"><i style="width:${e}%;background:${e<35?'var(--bad)':'var(--ok)'}"></i></span><span>${m>=2?'😁':m>=1?'🙂':m<=-2?'😞':m<=-1?'😕':'😐'}</span></div><div class="hu-s">${CLK.txt()} · ${CAL.fmt(CAL.today())}${(HOL.of(CAL.today())||{}).emo||''}</div></div><button class="hu-ph" data-hud="cel" aria-label="Celular">📱${LIFE.unread()?`<b>${LIFE.unread()>9?'9+':LIFE.unread()}</b>`:''}</button>`}};
 
@@ -5829,6 +5831,19 @@ function clFx(x,ctx){const w=(WEARFX[ctx]||{})[x.id]||(ctx==='mesa'&&x.price>=40
   return`${w?`<span class="clw">${w}</span>`:''}${own?`<span class="clo">sempre: ${own}</span>`:''}`}
 {const _r=OUT.render;OUT.render=function(){const r=_r.apply(this,arguments);try{const ov=document.getElementById('clOv');if(!ov)return r;const t=(ov.querySelector('.lcats .on')||{}).dataset;const ctx=t&&t.cl?t.cl.split('|')[1]:'mesa';
   ov.querySelectorAll('[data-cl]').forEach(b=>{const p=b.dataset.cl.split('|');if(p.length!==3||p[0]==='av'||b.textContent.startsWith('✖'))return;const x=ITEMS.find(i=>i.id===p[2]);if(!x||b.querySelector('.clfx'))return;const fx=clFx(x,ctx);if(fx)b.insertAdjacentHTML('beforeend',`<small class="clfx">${fx}</small>`)})}catch(e){console.warn(e)}return r}}
+/* =============== v67: o 📱 leva direto pro que falta ver =============== */
+const PEND={
+  list(){const s=LIFE.s;if(!s)return[];const o=[];
+    if(s.notes.some(x=>!x.read))o.push({k:'tab:cel',n:s.notes.filter(x=>!x.read).length,t:'notificações'});
+    if(s.love&&s.love.tu)o.push({k:'cel:♥',n:s.love.tu,t:s.love.nm});
+    Object.entries(s.th||{}).filter(([,T])=>T.u).sort((a,b)=>(b[1].t||0)-(a[1].t||0)).forEach(([n,T])=>o.push({k:'cel:'+n,n:T.u,t:n}));
+    if(s.ivs&&s.ivs.length)o.push({k:'tab:midia',n:1,t:'entrevista'});return o},
+  go(){const L=this.list();HOJE.go(L.length?L[0].k:'tab:cel')}};
+/* dentro de uma conversa ou da tela do celular: atalho pro próximo que falta ver */
+{const _rl=renderLife;renderLife=function(){const r=_rl.apply(this,arguments);try{if(location.hash==='#vida'&&LIFE.tab==='cel'){const cur=LIFE.open?'cel:'+LIFE.open:'tab:cel',L=PEND.list().filter(x=>x.k!==cur);
+  if(L.length&&!document.querySelector('.pnext')){const n=L.reduce((a,x)=>a+x.n,0),f=L[0];const h=`<button class="pnext" data-pnext="${lx(f.k)}">📱 Ainda falta ver: <b>${lx(f.t)}</b>${L.length>1?` e mais ${L.length-1}`:''} <span class="pnb">${n>9?'9+':n}</span> ›</button>`;
+    const anchor=document.querySelector('.vtop .cityhd')||document.querySelector('.vtop');if(anchor)anchor.insertAdjacentHTML(anchor.classList.contains('cityhd')?'afterend':'afterbegin',h)}}}catch(e){console.warn(e)}return r}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-pnext]');if(!b)return;e.preventDefault();e.stopPropagation();HOJE.go(b.dataset.pnext)},true);
 </script>
 </body>
 </html>
